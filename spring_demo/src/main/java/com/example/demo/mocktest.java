@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 /**
  * @author yangxc27652
  * @date 2020/6/30
- * @description
+ * @description  mock测试工具
  */
 public class mocktest {
 
