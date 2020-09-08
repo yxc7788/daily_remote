@@ -24,7 +24,7 @@ class ThreadTask1 implements Runnable{
     Object a;
     Object b;
 
-    public  ThreadTask1(Object a, Object b) {
+    ThreadTask1(Object a, Object b) {
         this.a = a;
         this.b = b;
     }
