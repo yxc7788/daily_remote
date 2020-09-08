@@ -3,7 +3,7 @@ package daily;
 /**
  * @author yangxc27652
  * @date 2020/9/8
- * @description  死锁测试
+ * @description  死锁测试，可以用jconsole可视化界面发现死锁
  */
 public class DeadLockTest {
 
