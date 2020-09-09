@@ -1,4 +1,4 @@
-package daily;
+package daily.notsafe;
 
 /**
  * @author yangxc27652
