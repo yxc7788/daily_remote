@@ -17,9 +17,9 @@ public class ThreadPoolTest {
 
         // 提交callable类型任务
         ThreadCallTask call = new ThreadCallTask();
-        FutureTask futureTask = new FutureTask(call);
+        FutureTask<String> futureTask = new FutureTask(call);
         service.submit(futureTask);
-        Object a = futureTask.get();
+        String a = futureTask.get();
         System.out.println(a);
 
         // 提交runable类型任务线程池提交任务30个,会报出异常
