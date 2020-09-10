@@ -9,10 +9,17 @@ public class StringUtilsTest {
 
     public static void main(String[] args) {
 
-        // 字符串替换 注意一定要
+        // 字符串替换 注意如果是String类型的话，一定要用新引用指向新对象
         String a = "aabb";
         String b = a.replace("a","2");
         System.out.println(b);
+
+        // 第一个字符换成3
+        StringBuilder a1= new StringBuilder("abc");
+        a1.replace(0,1,"3");
+        System.out.println(a1);
+
+
 
     }
 }
