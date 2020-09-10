@@ -9,9 +9,24 @@ public class StringUtilsTest {
 
     public static void main(String[] args) {
 
-        // 字符串替换
+        // 字符串替换 注意一定要
         String a = "aabb";
-        a.replace("a","aa");
-        System.out.println(a);
+        String b = a.replace("a","2");
+        System.out.println(b);
+
+    }
+}
+
+/**
+ * 测试类备用
+ */
+class StringUtil{
+
+    private String a;
+    private String b;
+
+    StringUtil(String a, String b){
+        this.a = a;
+        this.b = b;
     }
 }
