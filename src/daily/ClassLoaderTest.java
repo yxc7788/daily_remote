@@ -8,6 +8,17 @@ package daily;
 public class ClassLoaderTest {
     public static void main(String[] args) {
 
-        Classloader classloader = this.getClass().getClassLoader();
+        ClassLoaderTest test = new ClassLoaderTest();
+        test.test();
+    }
+
+    /**
+     * static方法中不能用this，所以加了一层test方法
+     */
+    void test () {
+        ClassLoader classloader = this.getClass().getClassLoader();
+        System.out.println("本类的类加载器是"+ classloader);
+        ClassLoader fatherLoader = classloader.getParent();
+        System.out.println("本类加载器的父加载器是"+ fatherLoader);
     }
 }
