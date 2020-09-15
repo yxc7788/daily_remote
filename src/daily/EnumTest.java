@@ -24,12 +24,12 @@ public class EnumTest {
 
         // 采用steam方式去遍历
         System.out.println("------------");
-        SearchCategoryEnum paramValue = Arrays.stream(SearchCategoryEnum.values())
+        String paramValue = Arrays.stream(SearchCategoryEnum.values())
                 .filter(e -> e.getValue().contains("图片"))
                 .findFirst()
-               //.map(ISystemParam::getValue)
+                .map(e -> e.getValue()+ "ddd")
                 .orElse(null);
-        System.out.println(paramValue.getValue());
+        System.out.println(paramValue);
 
         System.out.println("------------");
         System.out.println(SearchCategoryEnum.ALL);
