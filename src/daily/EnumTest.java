@@ -1,5 +1,7 @@
 package daily;
 
+import java.util.Arrays;
+
 /**
  * The type Enum test.
  *
@@ -18,6 +20,17 @@ public class EnumTest {
         for (SearchCategoryEnum s : SearchCategoryEnum.values()) {
             System.out.println(s.getValue());
         }
+
+
+        // 采用steam方式去遍历
+        System.out.println("------------");
+        SearchCategoryEnum paramValue = Arrays.stream(SearchCategoryEnum.values())
+                .filter(e -> e.getValue().contains("图片"))
+                .findFirst()
+               //.map(ISystemParam::getValue)
+                .orElse(null);
+        System.out.println(paramValue.getValue());
+
         System.out.println("------------");
         System.out.println(SearchCategoryEnum.ALL);
         System.out.println(SearchCategoryEnum.ALL.getValue());
@@ -57,6 +70,10 @@ enum SearchCategoryEnum {
      * Pic search category.
      */
     PIC("图片"),
+    /**
+     * Pic 1 search category enum.
+     */
+    PIC1("图片1"),
     /**
      * Baike search category.
      */
