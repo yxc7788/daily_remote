@@ -33,5 +33,13 @@ public class SteamApiTest2 {
         // 双冒号运算就是Java中的[方法引用],[方法引用]的格式是：类名 ：：方法名
         // 参考 www.cnblogs.com/maohuidong/p/11527681.html
         nums.forEach(System.out::println);
+
+
+
+        // noneMatch方法中全都不满足才会返回true   https://blog.csdn.net/ligh_sqh/article/details/96111086
+        Boolean bool = nums.stream().noneMatch(Integer.valueOf(1)::equals);
+        System.out.println(bool);
+
+        System.out.println(Integer.valueOf(1).equals(1));
     }
 }
