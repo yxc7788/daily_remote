@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <settings>
+        <!--注释原因：不需要指定日志要求，让 mybatis自动匹配系统的日志框架-->
+        <!-- 打印查询语句 -->
+        <!--<setting name="logImpl" value="STDOUT_LOGGING"/>-->
+
+        <!-- 暂时关闭一级缓存 -->
+<!--        <setting name="localCacheScope" value="STATEMENT"/>-->
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+    </settings>
+
+</configuration>
