@@ -8,6 +8,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,11 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * The type Demo application.
- *
+ * @author
+ * @date
  */
+
 @RestController
+@EnableCaching
 @SpringBootApplication
-@MapperScan("com.example.demo.dao")//使用MapperScan批量扫描所有的Mapper接口；
+@MapperScan("com.example.demo.dao")
 public class DemoApplication {
 
     @Autowired
