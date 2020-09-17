@@ -18,4 +18,11 @@ public interface UserDao {
      * @return
      */
     List<User> findAll();
+
+    /**
+     * 插入
+     * @param user
+     * @return
+     */
+    int insertUser(User user);
 }

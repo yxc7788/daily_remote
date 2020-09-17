@@ -4,4 +4,9 @@
     <select id="findAll" resultType="com.example.demo.entity.User">
         SELECT * FROM user
     </select>
+    <insert id="insertUser" parameterType="com.example.demo.entity.User">
+        insert into user (name, password, question) values (
+        #{name,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}
+        )
+    </insert>
 </mapper>

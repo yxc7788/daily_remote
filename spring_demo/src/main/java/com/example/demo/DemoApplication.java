@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import com.example.demo.entity.User;
 import com.example.demo.service.UserService;
 import com.example.demo.service.impl.UserServiceImpl;
 import org.mybatis.spring.annotation.MapperScan;
@@ -47,6 +48,14 @@ public class DemoApplication {
     @ResponseBody()
     public String test() {
         System.out.println(userService.findAll().size());
+
+
+        User user1 = new User();
+        user1.setName("55");
+        user1.setQuestion("ggq");
+        user1.setPassWord("365");
+        userService.insertUser(user1);
+
         return "haha";
     }
 }

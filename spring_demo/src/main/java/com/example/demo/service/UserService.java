@@ -15,4 +15,11 @@ public interface UserService  {
      * @return
      */
     List<User> findAll();
+
+    /**
+     * 插入
+     * @param user
+     * @return
+     */
+    Integer insertUser(User user);
 }
