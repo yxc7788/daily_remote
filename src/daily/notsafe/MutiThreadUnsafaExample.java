@@ -37,13 +37,14 @@ class MyThread implements Runnable{
 
         try {
             while (num>0) {
-                Thread.sleep(100);
+                // Thread.sleep(100);    放在前面会出现结果为-2的情况，应该放在代码后面
 
                // synchronized (o){
-                    if (num>0) {
+                  //  if (num>0) {
                         num--;
                         System.out.println(Thread.currentThread().getName()+"抢到一张票，"+ "剩余数量为:"+ num);
-                    }
+                        Thread.sleep(100);
+                   // }
               //  }
             }
         } catch (InterruptedException e) {
