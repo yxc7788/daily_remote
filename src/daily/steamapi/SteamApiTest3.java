@@ -47,7 +47,43 @@ public class SteamApiTest3 {
         List<Integer> listWithoutDuplicates = numbersList.stream().distinct().collect(Collectors.toList());
         System.out.println(listWithoutDuplicates);
 
+        System.out.println("----------对象去重-------");
+        List<User> userList = new ArrayList<User>();
+        userList.add(new User("11"));
+        userList.add(new User("11"));
+        userList.add(new User("12"));
+        userList.add(new User("12"));
+
+        // 这种方式对于对象没有效果
+        userList = userList.stream().distinct().collect(Collectors.toList());
+        System.out.println(userList);
+
+        List<String> ids = new ArrayList<>();
+        userList = userList.stream().filter(
+                v -> {
+                    boolean flag = !ids.contains(v.getId());
+                    ids.add(v.getId());
+                    return flag;
+                }
+        ).collect(Collectors.toList());
+
+        System.out.println(userList);
+    }
+}
 
 
+class User {
+
+    String id;
+
+    User(String id){
+        this.id = id;
+    }
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }
