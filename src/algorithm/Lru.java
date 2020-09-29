@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author yangxc27652
  * @date 2020 /9/9
- * @description LRU实现
+ * @description  双向链表 + hashmap实现
  */
 public class Lru {
 
