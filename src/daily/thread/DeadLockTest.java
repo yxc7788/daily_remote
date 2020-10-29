@@ -1,4 +1,4 @@
-package daily;
+package daily.thread;
 
 /**
  * @author yangxc27652

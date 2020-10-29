@@ -1,4 +1,4 @@
-package daily;
+package daily.thread;
 
 import java.util.concurrent.*;
 
@@ -11,22 +11,37 @@ public class ThreadPoolTest {
     public static void main(String[] args) throws Exception {
 
         // 创建定长线程池相关参数
-        int maxValue = 10;
+        int maxValue = 30;
         BlockingQueue queue = new ArrayBlockingQueue(maxValue);
         ExecutorService service = new ThreadPoolExecutor(5,10,30,TimeUnit.SECONDS,queue);
 
         // 提交callable类型任务
+//        ThreadCallTask call = new ThreadCallTask();
+//        FutureTask<String> futureTask = new FutureTask(call);
+//        service.submit(futureTask);
+//        String a = futureTask.get();
+//        System.out.println(a);
+
         ThreadCallTask call = new ThreadCallTask();
-        FutureTask<String> futureTask = new FutureTask(call);
-        service.submit(futureTask);
+        Future<String> futureTask =  service.submit(call);
         String a = futureTask.get();
         System.out.println(a);
 
+
+
+
+//        // 提交callable类型任务2
+//        ThreadCallTask call1 = new ThreadCallTask();
+//        FutureTask<String> futureTask1 = new FutureTask(call);
+//        service.submit(futureTask1);
+//        String a1 = futureTask1.get();
+//        System.out.println(a1);
+
         // 提交runable类型任务线程池提交任务30个,会报出异常
-        for (int i=0;i<30;i++) {
-            ThreadTask task = new ThreadTask(i);
-            service.submit(task);
-        }
+//        for (int i=0;i<30;i++) {
+//            ThreadCallTask task = new ThreadCallTask();
+//            service.submit(task);
+//        }
     }
 }
 
@@ -64,7 +79,7 @@ class ThreadCallTask implements Callable{
     public Object call(){
 
         try {
-            System.out.println("Callable的任务正在执行");
+            System.out.println("Callable的任务正在执行,线程为：" + Thread.currentThread().getName());
             Thread.sleep(3000);
         } catch (InterruptedException e) {
             e.printStackTrace();
