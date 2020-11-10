@@ -9,4 +9,11 @@
         #{name,jdbcType=VARCHAR}, #{passWord,jdbcType=VARCHAR}, #{question,jdbcType=VARCHAR}
         )
     </insert>
+    <select id = "selectUserById" resultType="com.example.demo.entity.User">
+        SELECT * FROM user where id = #{id,jdbcType=VARCHAR}
+    </select>
+    <update id="updateNameById">
+        update user set name =  #{name,jdbcType=VARCHAR}
+        where id =  #{id,jdbcType=VARCHAR}
+    </update>
 </mapper>
