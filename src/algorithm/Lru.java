@@ -14,6 +14,25 @@ import java.util.Map;
  */
 public class Lru {
 
+    /**
+     * 链表节点的定义
+     */
+    class LruNode{
+
+        String key;
+
+        Object value;
+
+        LruNode next;
+
+        LruNode pre;
+
+        public LruNode(String key, Object value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
+
     Map<String, LruNode> map = new HashMap<>();
 
     LruNode head;
@@ -118,21 +137,3 @@ public class Lru {
     }
 }
 
-/**
- * 链表节点的定义
- */
-class LruNode{
-
-    String key;
-
-    Object value;
-
-    LruNode next;
-
-    LruNode pre;
-
-    public LruNode(String key, Object value) {
-        this.key = key;
-        this.value = value;
-    }
-}
