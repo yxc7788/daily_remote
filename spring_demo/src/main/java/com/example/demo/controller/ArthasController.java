@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.dao.UserDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,9 +22,15 @@ public class ArthasController {
     /**
      *  查找路径时候选择类右键copy —— path from source root
      */
+
+
+    @Autowired
+    private UserDao userDao;
+
     @ResponseBody
     @RequestMapping("/trace")
     public String test() {
+        userDao.findAll();
         a();
         b();
         c();

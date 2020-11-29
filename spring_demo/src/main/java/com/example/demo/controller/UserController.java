@@ -33,13 +33,13 @@ public class UserController {
         User user = userService.selectUserById("3");
         System.out.println("id是3的用户，名字是" + user.getName());
 
-        userService.updateNameById("3", "445");
+        userService.updateNameById("3", "222");
         // User userNew = userService.selectUserById("3");
         User userNew = selectUser();
         System.out.println("更新之后，id是3的用户，名字是" + userNew.getName());
 
-        updateName("3", "555");
-        System.out.println("第二次更新之后，id是3的用户，名字是" + userService.selectUserById("3").getName());
+        updateName("2", "刘备");
+        System.out.println("第二次更新之后，id是2的用户，名字是" + userService.selectUserById("3").getName());
 
         throw new RuntimeException("抛出一个异常，让事务回滚");
     }
