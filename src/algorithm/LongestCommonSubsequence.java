@@ -3,7 +3,7 @@ package algorithm;
 /**
  * @author yangxc27652
  * @date 2020/11/29
- * @description
+ * @description 动态规划
  * https://leetcode-cn.com/problems/longest-common-subsequence/solution/dong-tai-gui-hua-tu-wen-jie-xi-by-yijiaoqian/ */
 
 public class LongestCommonSubsequence {

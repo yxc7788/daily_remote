@@ -1,5 +1,7 @@
 package algorithm;
 
+import algorithm.commen.ListNode;
+
 /**
  * @author yangxc27652
  * @date 2020/11/29
@@ -7,7 +9,7 @@ package algorithm;
  */
 public class ReverseList {
 
-    public static class ListNode {
+    public class ListNode {
         int val;
         ListNode next;
         ListNode(int x) { val = x; }
