@@ -1,6 +1,6 @@
 package algorithm;
 
-import algorithm.commen.ListNode;
+
 
 /**
  * @author yangxc27652
