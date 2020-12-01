@@ -20,8 +20,8 @@ public class LongestConsecutive {
     public int longestConsecutive(int[] nums) {
 
         /**
-         * 我们要枚举的数 xx 一定是在数组中不存在前驱数 x-1x−1 的，
-         * 不然按照上面的分析我们会从 x-1x−1 开始尝试匹配，
+         * 我们要枚举的数 x 一定是在数组中不存在前驱数 x-1 的，
+         * 不然按照上面的分析我们会从 x-1 开始尝试匹配，
          * 因此我们每次在哈希表中检查是否存在 x-1即能判断是否需要跳过了。
          */
         Set<Integer> num_set = new HashSet<Integer>();
