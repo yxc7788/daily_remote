@@ -44,11 +44,14 @@ public class All {
      *  从后往前，先计算需要多少空间，然后从后往前移动，则每个字符只为移动一次，这样效率更高一点。
      */
 
+
+
     public String replaceSpace(StringBuffer str) {
         int spacenum = 0;//spacenum为计算空格数
         for (int i=0;i<str.length();i++){
-            if (str.charAt(i)==' ')
+            if (str.charAt(i)==' ') {
                 spacenum++;
+            }
         }
         int indexold = str.length()-1; //indexold为为替换前的str下标
         int newlength = str.length() + spacenum*2;//计算空格转换成%20之后的str长度
@@ -67,14 +70,34 @@ public class All {
     }
 
     /**
+     * 方法二
+     * @param str
+     * @return
+     */
+    public String replaceSpace2(StringBuffer str) {
+        String str1=str.toString();
+        StringBuffer sb = new StringBuffer();
+        for(int i=0;i<str1.length();i++){
+            if (str1.charAt(i)==' '){
+                sb.append("%20");
+            }else{
+                sb.append(str1.charAt(i));
+            }
+
+        }
+        return sb.toString();
+    }
+
+    /**
      *  5.输入一个链表，从尾到头打印链表每个节点的值。
      *     思路：借助栈实现，或使用递归的方法。
      */
 
     public ArrayList<Integer> printListFromTailToHead(ListNode listNode) {
         ArrayList<Integer> list = new ArrayList<>();
-        if (listNode == null)
+        if (listNode == null) {
             return list;
+        }
         Stack<ListNode> stack = new Stack<>();
         while (listNode != null) {
             stack.push(listNode);
@@ -99,7 +122,7 @@ public class All {
         TreeNode right;
         TreeNode(int x) { val = x; }
     }
-    public TreeNode reConstructBinaryTree(int [] pre,int [] in) {
+    public TreeNode reConstructBinaryTree(int [] pre, int [] in) {
         if (pre == null || in == null) {
             return null;
         }
@@ -151,58 +174,55 @@ public class All {
      *     思路：利用二分法，找到中间的数，然后和最左边的值进行比较，若大于最左边的数，则最左边从mid开始，
      *     若小于最右边值，则最右边从mid开始。若左中右三值相等，则取mid前后值中较小的数。
      */
+    /*
+     * 采用二分法解答这个问题，mid = low + (high - low)/2，需要考虑三种情况：(1)array[mid] > array[high]:
+     * 出现这种情况的array类似[3,4,5,6,0,1,2]，此时最小数字一定在mid的右边。low = mid + 1
+     * (2)array[mid] == array[high]:
+     * 出现这种情况的array类似 [1,0,1,1,1] 或者[1,1,1,0,1]，此时最小数字不好判断在mid左边
+     * 还是右边,这时只好一个一个试 ，high = high - 1
+     * (3)array[mid] < array[high]，出现这种情况的array类似[2,2,3,4,5,6,6],此时最小数字一定就是array[mid]或者在mid的左
+     * 边。因为右边必然都是递增的， high = mid
+     * 注意这里有个坑：如果待查询的范围最后只剩两个数，那么mid 一定会指向下标靠前的数字
+     * 比如 array = [4,6]，array[low] = 4 ;array[mid] = 4 ; array[high] = 6 ;
+     * 如果high = mid - 1，就会产生错误， 因此high = mid，但情形(1)中low = mid + 1就不会错误
+     */
 
     public int minNumberInRotateArray(int [] array) {
-        if (array == null || array.length == 0)
-            return 0;
-        int left = 0;
-        int right = array.length - 1;
-        int mid = 0;
-        while (array[left] >= array[right]) {
-            if(right - left <= 1) {
-                mid = right;
-                break;
-            }
-            mid = (left + right)/2;
-            if (array[left] == array[mid] && array[mid] == array[right]) {
-                if (array[left+1] != array[right-1]) {
-                    mid = array[left+1] < array[right-1] ? left+1:right-1;
-                } else {
-                    left++;
-                    right--;
-                }
-            } else {
-                if (array[left] <= array[mid]) {
-                    left = mid;
-                } else {
-                    right = mid;
-                }
+        int low = 0 ; int high = array.length - 1;
+        while(low < high){
+            int mid = low + (high - low) / 2;
+            if(array[mid] > array[high]){
+                low = mid + 1;
+            }else if(array[mid] == array[high]){
+                high = high - 1;
+            }else{
+                high = mid;
             }
         }
-        return array[mid];
+        return array[low];
     }
 
     /**
      *   9.1现在要求输入一个整数n，请你输出斐波那契数列的第n项。n<=39
      *     思路：递归的效率低，使用循环方式。
-     *      
      */
 
-    public long fibonacci(int n) {
-        long result=0;
-        long preOne=1;
-        long preTwo=2;
-        if(n==0) {
-            return preTwo;
-        } if(n==1) {
-            return preOne;
+    public int fibonacci(int n) {
+        if(n == 1){
+            return 1;
         }
-        for (int i = 2; i <= n; i++) {
-            result = preOne+preTwo;
-            preTwo = preOne;
-            preOne = result;
+        if(n == 2){
+            return 1;
         }
-        return result;
+        int temp = 0;
+        int pre2 = 1;
+        int pre1 = 1;
+        for(int i = 2; i < n; i++){
+            temp = pre2 +pre1;
+            pre2 = pre1;
+            pre1 = temp;
+        }
+        return temp;
     }
 
     /**
@@ -213,29 +233,60 @@ public class All {
      *     思路：斐波那契数列思想
      */
 
-    public int fibonaccik(int n) {
-        int number = 1;
-        int sum = 1;
-        if (n <= 0)
-            return 0;
-        if (n == 1 ) {
-            return 1;
+    public int JumpFloor(int target) {
+        if(target <= 2){
+            return target;
         }
-        while (n-- >= 2) {
-            sum += number;
-            number = sum - number;
+        int pre2 = 1, pre1 = 2;
+        for (int i = 3; i <= target; i++){
+            int cur = pre2 + pre1;
+            pre2 = pre1;
+            pre1 = cur;
         }
-        return sum;
+        return pre1;
+    }
+
+    /**
+     * 方法2
+     * @param n
+     * @return
+     */
+    public int JumpFloor2(int n) {
+        if (n == 1) return 1;
+        if (n == 2) return 2;
+        return JumpFloor(n - 1) + JumpFloor(n - 2);
     }
 
     /**
      * 9.4一只青蛙一次可以跳上1级台阶，也可以跳上2级……它也可以跳上n级。求该青蛙跳上一个n级的台阶总共
      *     有多少种跳法。
-     *     思路：2^(n-1)
+     *     根据f[n] = 2*f[n-1]，和初始条件f[0] = f[1] = 1，可以得出结果是2^（n-1）
      */
 
-    public int JumpFloor2(int target) {
+    public int JumpFloor3(int target) {
         return (int) Math.pow(2,target-1);
+    }
+
+
+    /**
+     * 9.5 题目描述
+     * 我们可以用2*1的小矩形横着或者竖着去覆盖更大的矩形。请问用n个2*1的小矩形无重叠地覆盖一个2*n的大矩形，总共有多少种方法？
+     * 比如n=3时，2*3的矩形块有3种覆盖方法：
+     */
+
+    public int rectCover(int target) {
+        if(target <= 2){
+            return target;
+        }
+        int pre1 = 1;
+        int pre2 = 2;
+        for(int i = 3; i <= target; i++){
+            int cur = pre1 + pre2;
+            pre1 = pre2;
+            pre2 = cur;
+        }
+        return pre2;
+
     }
 
     /**
@@ -244,7 +295,7 @@ public class All {
      *     数的值
      */
 
-    public int NumberOf1(int n) {
+    public int numberOf1(int n) {
         int count = 0;
         while (n != 0) {
             count++;
@@ -260,32 +311,19 @@ public class All {
      */
 
     public double Power(double base, int exponent) {
-        double res = 0;
-        if (equal(base,0)) {
-            return 0;
+        if (base == 0.0){
+            return 0.0;
         }
-        if (exponent == 0) {
-            return 1.0;
+        // 前置结果设为1.0，即当exponent=0 的时候，就是这个结果
+        double result = 1.0d;
+        // 获取指数的绝对值
+        int e = exponent > 0 ? exponent : -exponent;
+        // 根据指数大小，循环累乘
+        for(int i = 1 ; i <= e; i ++){
+            result *= base;
         }
-        if (exponent > 0) {
-            res = mutiply(base,exponent);
-        }else {
-            res = mutiply(1/base,-exponent);
-        }
-        return res;
-    }
-    public double mutiply(double base, int e) {
-        double sum = 1;
-        for (int i = 0; i < e; i++) {
-            sum = sum * base;
-        }
-        return sum;
-    }
-    public boolean equal(double a, double b) {
-        if (a - b < 0.000001 && a - b > -0.000001) {
-            return true;
-        }
-        return false;
+        // 根据指数正负，返回结果
+        return exponent > 0 ? result : 1 / result;
     }
 
 
@@ -354,50 +392,71 @@ public class All {
 //    思路：每次只和前面一个数交换位置。或者利用辅助数组
 
     public void reOrderArray(int [] array) {
-        if(array == null)
-            return ;
-        for(int i = 1; i < array.length; i++){
-            int temp = array[i];
-            int j = i - 1;
-            if(array[i] % 2 != 0){
-                while(j >= 0){
-                    if(array[j] % 2 != 0){
-                        break;
-                    }
-                    if(array[j]%2 == 0){
-                        int t = array[j+1];
-                        array[j+1] = array[j];
-                        array[j] = t;
-                        j--;
-                    }
-                }
+        int oldIndex=0;
+        int evenIndex=0;
+        int[] newArray=new int[array.length];
+        for(int i=0;i<array.length;i++){
+            if(array[i]%2!=0){
+                newArray[oldIndex]=array[i];
+                oldIndex++;
             }
-            array[j+1] = temp;
+        }
+        evenIndex=oldIndex;
+        for(int j=0;j<array.length;j++){
+            if(array[j]%2==0){
+                newArray[evenIndex]=array[j];
+                evenIndex++;
+            }
+        }
+        for(int i=0;i<array.length;i++){
+            array[i]=newArray[i];
         }
     }
+
+
+    /**
+     * 方法2
+     * @return 这个也能过，但是牛客有人说错的
+     */
+    public void reOrderArray2(int [] array) {
+
+        for (int i = 0; i < array.length;i++){
+            for (int j = array.length - 1; j>i;j--)
+            {
+                if (array[j] % 2 == 1 && array[j - 1]%2 == 0) //前偶后奇交换
+                {
+                    int tmp = array[j];
+                    array [j] = array[j-1];
+                    array[j-1] = tmp;
+                }
+            }
+        }
+    }
+
     
 //15.输入一个链表，输出该链表中倒数第k个结点。
 //    扩展题：找中间节点，使用两个指针，一个走一步，一个走两步。找到中间节点
 //    思路：定义一快一慢两个指针，快指针走K步，然后慢指针开始走，快指针到尾时，慢指针就找到了倒数第K个
 //    节点。
-    
-    public ListNode FindKthToTail(ListNode head,int k) {
-        if (head == null || k <= 0) {
+
+    public ListNode findKthToTail(ListNode head,int k) {
+        if(head==null){
             return null;
-        } 
-        ListNode fast = head;
-        ListNode slow = head;
-        while(k-- > 1) {
-            if (fast.next != null)
-                fast = fast.next;
-            else
+        }
+        ListNode p = head;
+        ListNode q = head;
+        //快指针先走k步
+        for(int i=0;i<k;i++){
+            if(q==null){ //如果中途快指针走到头了，说明k大于链表长度
                 return null;
-        } 
-        while (fast.next != null) {
-            fast = fast.next;
-            slow = slow.next;
-        } 
-        return slow;
+            }
+            q = q.next;
+        }
+        while(p!=null && q!=null){
+            p=p.next;
+            q=q.next;
+        }
+        return p;
     }
     
 //16.输入一个链表，反转链表后，输出链表的所有元素。
@@ -405,17 +464,32 @@ public class All {
 //    思路：定义两个指针，反向输出
 
     public ListNode ReverseList(ListNode head) {
-        if (head == null) {
-            return null;
-        } 
-        ListNode temp = null;
-        while(head != null) {
-            ListNode p = head.next;
-            head.next = temp;
-            temp = head;
-            head = p;
-        } 
-        return temp;
+        ListNode pre=null;
+        ListNode next=null;
+        while(head!=null){
+            next=head.next;
+            head.next=pre;
+            pre=head;
+            head=next;
+        }return pre;
+    }
+
+    /***
+     * 方法2
+     * @return
+     */
+    public ListNode reverseList2(ListNode head) {
+        ListNode p = new ListNode(0);
+        p.next = null;
+        while(head!=null){
+            ListNode tmp = head.next;
+            head.next = p.next;
+            p.next = head;
+            head = tmp;
+
+        }
+        return p.next;
+
     }
     
 //17.输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
@@ -437,6 +511,49 @@ public class All {
             newHead.next = Merge(list1,list2.next);
         } 
         return newHead;
+    }
+
+    /**
+     * 方法2
+     * @param list1
+     * @param list2
+     * @return
+     */
+    public ListNode merge(ListNode list1,ListNode list2) {
+
+        ListNode newListNode=null; //不能放在类中，只能在方法中
+        ListNode current=null;
+        if(list1==null){
+            return list2;
+        }
+        if(list2==null){
+            return list1;
+        }
+        while(list1!=null&&list2!=null){
+            if(list1.val<list2.val){
+                if(newListNode==null){
+                    newListNode=current=list1;
+                }else{
+                    current.next=list1;
+                    current=current.next;
+                }
+                list1=list1.next;
+            }else{
+                if(newListNode==null){
+                    newListNode=current=list2;
+                }else{
+                    current.next=list2;
+                    current=current.next;
+                }
+                list2=list2.next;
+            }
+        }
+        if(list1==null){
+            current.next=list2;
+        }else{
+            current.next=list1;
+        }
+        return newListNode;
     }
     
 //18.输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
@@ -471,7 +588,23 @@ public class All {
 //19.操作给定的二叉树，将其变换为源二叉树的镜像。
 //    思路：使用递归或非递归方式交换每个节点的左右子树位置。
 
-    public void Mirror(TreeNode root) {
+
+    public void mirror1(TreeNode root) {
+        if(root == null){
+            return;
+        }
+        TreeNode temp = root.left;
+        root.left = root.right;
+        root.right = temp;
+        mirror1(root.left);
+        mirror1(root.right);
+    }
+
+    /**
+     * 方法2
+     * @param root
+     */
+    public void mirror(TreeNode root) {
         if (root == null) {
             return;
         }
