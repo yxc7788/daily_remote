@@ -846,7 +846,7 @@ public class All {
     }
 
     /**
-     * 方法1
+     * 方法1 https://leetcode-cn.com/problems/fu-za-lian-biao-de-fu-zhi-lcof/solution/tong-guo-hashmaplai-shi-xian-by-try-62/
      */
     public RandomListNode copyRandomList(RandomListNode head) {
         HashMap<RandomListNode,RandomListNode> map = new HashMap<>(); //创建HashMap集合
@@ -872,11 +872,14 @@ public class All {
 
 
     /**
-     * 方法2
+     * 方法2 解题思路：
+     * 1、遍历链表，复制每个结点，如复制结点A得到A1，将结点A1插到结点A后面；
+     * 2、重新遍历链表，复制老结点的随机指针给新结点，如A1.random = A.random.next;
+     * 3、拆分链表，将链表拆分为原链表和复制后的链表
      * @param pHead
      * @return
      */
-    public RandomListNode Clone2(RandomListNode pHead) {
+    public RandomListNode clone2(RandomListNode pHead) {
         if(pHead == null) {
             return null;
         }
@@ -920,97 +923,100 @@ public class All {
     /**
      * 方法1   https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/solution/mian-shi-ti-36-er-cha-sou-suo-shu-yu-shuang-xian-5/
      */
-    TreeNode pre, head;
+    TreeNode head, pre;
     public TreeNode treeToDoublyList(TreeNode root) {
-        if(root == null) {
-            return null;
-        }
+        if(root==null) return null;
         dfs(root);
-        head.left = pre;
         pre.right = head;
+        head.left =pre;//进行头节点和尾节点的相互指向，这两句的顺序也是可以颠倒的
         return head;
     }
-    void dfs(TreeNode cur) {
-        if(cur == null) {
-            return;
-        }
+
+    public void dfs(TreeNode cur){
+        if(cur==null) return;
         dfs(cur.left);
-        if(pre != null)  {
-            pre.right = cur;
-        }
-        else {
-            head = cur;
-        }
-        cur.left = pre;
-        pre = cur;
-        dfs(cur.right);
+
+        //pre用于记录双向链表中位于cur左侧的节点，即上一次迭代中的cur,当pre==null时，cur左侧没有节点,即此时cur为双向链表中的头节点
+        if(pre==null) head = cur;
+            //反之，pre!=null时，cur左侧存在节点pre，需要进行pre.right=cur的操作。
+        else pre.right = cur;
+
+        cur.left = pre;//pre是否为null对这句没有影响,且这句放在上面两句if else之前也是可以的。
+
+        pre = cur;//pre指向当前的cur
+        dfs(cur.right);//全部迭代完成后，pre指向双向链表中的尾节点
     }
 
+//    方法一：非递归版
+//    解题思路：
+//     1.核心是中序遍历的非递归算法。
+//     2.修改当前遍历节点与前一遍历节点的指针指向。
 
-    public TreeNode Convert(TreeNode pRootOfTree) {
-        TreeNode lastlist = covertNode(pRootOfTree,null);
-        TreeNode pHead = lastlist;
-        while (pHead != null && pHead.left != null) {
-            pHead = pHead.left;
-        }
-        return pHead;
-    }
-    public TreeNode covertNode(TreeNode root, TreeNode lastlist) {
-        if (root == null)
+    public TreeNode convertBSTToBiList(TreeNode root) {
+        if(root==null)
             return null;
-        TreeNode cur = root;
-        if (cur.left != null) {
-            lastlist = covertNode(cur.left,lastlist);
+        Stack<TreeNode> stack = new Stack<TreeNode>();
+        TreeNode p = root;
+        TreeNode pre = null;// 用于保存中序遍历序列的上一节点
+        boolean isFirst = true;
+        while(p!=null||!stack.isEmpty()){
+            while(p!=null){
+                stack.push(p);
+                p = p.left;
+            }
+            p = stack.pop();
+            if(isFirst){
+                root = p;// 将中序遍历序列中的第一个节点记为root
+                pre = root;
+                isFirst = false;
+            }else{
+                pre.right = p;
+                p.left = pre;
+                pre = p;
+            }
+            p = p.right;
         }
-        cur.left = lastlist;
-        if (lastlist != null) {
-            lastlist.right = cur;
-        }
-        lastlist = cur;
-        if (cur.right != null) {
-            lastlist = covertNode(cur.right,lastlist);
-        }
-        return lastlist;
+        return root;
     }
-
 
 //    28.输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所
 //    能排列出来的所有字符串abc,acb,bac,bca,cab和cba。
 //    思路：将当前位置的字符和前一个字符位置交换，递归。
-     
-    public ArrayList<String> Permutation(String str) {
-        ArrayList<String> result = new ArrayList<String>() ;
-        if(str == null || str.length() == 0)
-            return result;
-        char[] chars = str.toCharArray() ;
-        TreeSet<String> temp = new TreeSet<>() ;
-        Permutation(chars, 0, temp);
-        result.addAll(temp) ;
-        return result ;
+
+
+    // https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/solution/mian-shi-ti-38-zi-fu-chuan-de-pai-lie-hui-su-fa-by/
+
+    List<String> res = new LinkedList<>();
+    char[] c;
+    public String[] permutation(String s) {
+        c = s.toCharArray();
+        dfs(0);
+        return res.toArray(new String[res.size()]);
     }
-    public void Permutation(char[] chars, int index, TreeSet<String> result) {
-        if(chars == null || chars.length == 0 )
-            return ;
-        if (index < 0 || index > chars.length - 1)
+    void dfs(int x) {
+        if(x == c.length - 1) {
+            res.add(String.valueOf(c)); // 添加排列方案
             return;
-        if(index == chars.length-1) {
-            result.add(String.valueOf(chars)) ;
-        }else {
-            for(int i=index ; i<=chars.length-1 ; i++) {
-                swap(chars, index, i) ;
-                Permutation(chars, index+1, result);
-        // 回退
-                swap(chars, index, i) ;
-            }
+        }
+        HashSet<Character> set = new HashSet<>();
+        for(int i = x; i < c.length; i++) {
+            if(set.contains(c[i])) continue; // 重复，因此剪枝
+            set.add(c[i]);
+            swap(i, x); // 交换，将 c[i] 固定在第 x 位
+            dfs(x + 1); // 开启固定第 x + 1 位字符
+            swap(i, x); // 恢复交换
         }
     }
-    public void swap(char[] c, int a,int b) {
-        char temp = c[a];
+    void swap(int a, int b) {
+        char tmp = c[a];
         c[a] = c[b];
-        c[b] = temp;
+        c[b] = tmp;
     }
 
-//29.数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字
+
+
+//29.数组中有一个数字出现的次数超过数组长度的一半，请找出这个数字, 没有的话返回0
+//     输入 [1,2,3,2,2,2,5,4,2]  输出 2
 //    思路：将首次出现的数count+1，与之后的数进行比较，相等则+1，否则—1，最后进行校验是否超过长度的一
 //    半。
 
@@ -1133,7 +1139,7 @@ public class All {
      * @param input
 
      */
-    public ArrayList<Integer> GetLeastNumbers_Solution3(int [] input, int k) {
+    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
         ArrayList<Integer> list = new ArrayList<>();
         Arrays.sort(input);
         int i = 0;
@@ -1145,7 +1151,7 @@ public class All {
     }
 
 
-//31.求连续子数组（包含负数）的最大和
+//31.求连续子数组（包含负数）的最大和   输入[1,-2,3,10,-4,7,2,-5]  返回18
 //    思路：若和小于0，则将最大和置为当前值，否则计算最大和。
      
     public int FindGreatestSumOfSubArray(int[] array) {
@@ -1166,32 +1172,29 @@ public class All {
         return greast;
     }
 
-//32.从1到整数n中1出现的次数
-//    思路：若百位上数字为0，百位上可能出现1的次数由更高位决定；若百位上数字为1，百位上可能出现1的次数
-//    不仅受更高位影响还受低位影响；若百位上数字大于1，则百位上出现1的情况仅由更高位决定
-     
-    public long CountOne2(long n) {
-        long count = 0; // 1的个数
-        long i = 1; // 当前位
-        long current = 0,after = 0,before = 0;
-        while((n / i) != 0) {
-            before = n / (i * 10); // 高位
-            current = (n / i) % 10; // 当前位
-            after = n - (n / i) * i; // 低位
-            if (current == 0)
-            //如果为0,出现1的次数由高位决定,等于高位数字 * 当前位数
-                count = count + before * i;
-            else if(current == 1)
-            //如果为1,出现1的次数由高位和低位决定,高位*当前位+低位+1
-                count = count + before * i + after + 1;
-            else if (current > 1)
-            // 如果大于1,出现1的次数由高位决定,（高位数字+1）* 当前位数
-                count = count + (before + 1) * i;
-            //前移一位
-            i = i * 10;
+    /**
+     * 方法2  用例：输入[1,-2,3,10,-4,7,2,-5]  返回18
+     * @param array
+     * @return
+     */
+    public int findGreatestSumOfSubArray(int[] array) {
+        int maxSum = array[0], curSum = array[0];
+        for(int i=1; i<array.length; i++){
+            curSum = Math.max(array[i], curSum + array[i]);
+            maxSum = Math.max(maxSum, curSum);
         }
-        return count;
+        return maxSum;
     }
+
+//32.从1到整数n中1出现的次数。 用例 1~13的整数中1出现的次数,并算出100~1300的整数中1出现的次数？
+// 1~13中包含1的数字有1、10、11、12、13因此共出现6次
+// 思路：若百位上数字为0，百位上可能出现1的次数由更高位决定；若百位上数字为1，百位上可能出现1的次数
+// 不仅受更高位影响还受低位影响；若百位上数字大于1，则百位上出现1的情况仅由更高位决定
+
+   //https://www.cnblogs.com/xuanxufeng/p/6854105.html
+
+
+
     //解法二：公式法
     public int NumberOf1Between1AndN_Solution(int n){
         int count=0;
@@ -1206,6 +1209,24 @@ public class All {
         return count;
     }
 
+    /**
+     * 方法3, 比较直观，不到万不得已不用
+     */
+    public int NumberOf1Between1AndN_Solution(int n) {
+        int count = 0;
+        while(n>0){
+            String str = String.valueOf(n);
+            char [] chars = str.toCharArray();
+            for(int i=0;i<chars.length;i++){
+                if(chars[i]=='1')
+                    count++;
+            }
+            n--;
+        }
+        return count;
+    }
+
+
 
 //33.输入一个正整数数组，把数组里所有数字拼接起来排成一个数，打印能拼接出的所有数字中最小的一个
 //    思路：先将整型数组转换成String数组，然后将String数组排序，最后将排好序的字符串数组拼接出来。关键就
@@ -1213,8 +1234,9 @@ public class All {
 //    用。
      
     public String PrintMinNumber(int [] numbers) {
-        if(numbers == null || numbers.length == 0)
+        if(numbers == null || numbers.length == 0) {
             return "";
+        }
         int len = numbers.length;
         String[] str = new String[len];
         StringBuilder sb = new StringBuilder();
@@ -1235,6 +1257,29 @@ public class All {
         return sb.toString();
     }
 
+    /**
+     * 方法2
+     */
+    public String printMinNumber2(int [] numbers) {
+
+        for (int i = 0; i < numbers.length; i++) {
+            for (int j = i + 1; j < numbers.length; j++) {
+                String left = String.valueOf(numbers[i]);
+                String right = String.valueOf(numbers[j]);
+                if ((left + right).compareTo(right + left) >= 0) {
+                    int temp = numbers[i];
+                    numbers[i] = numbers[j];
+                    numbers[j] = temp;
+                }
+            }
+        }
+        StringBuilder s = new StringBuilder();
+        for (int i = 0; i < numbers.length; i++) {
+            s.append(numbers[i]);
+        }
+        return s.toString();
+
+    }
 
 //34.丑数是只包含因子2、3和5的数，求从小到大的第N个丑数。
 //    思路：乘2或3或5，之后比较取最小值。
@@ -1260,11 +1305,37 @@ public class All {
         return arr[index - 1];
     }
 
+    /**
+     * 方法2
+     * 所以只需要把得到的丑数不断地乘以2、3、5之后并放入他们应该放置的位置即可，
+     * 而此题的难点就在于如何有序的放在合适的位置。
+     * 1乘以 （2、3、5）=2、3、5；2乘以（2、3、5）=4、6、10；3乘以（2、3、5）=6,9,15；5乘以（2、3、5）=10、15、25；
+     * 从这里我们可以看到如果不加策略地添加丑数是会有重复并且无序，
+     * 而在2x，3y，5z中，如果x=y=z那么最小丑数一定是乘以2的，但关键是有可能存在x》y》z的情况，
+     * 所以我们要维持三个指针来记录当前乘以2、乘以3、乘以5的最小值，然后当其被选为新的最小值后，要把相应的指针+1；
+     * 因为这个指针会逐渐遍历整个数组，因此最终数组中的每一个值都会被乘以2、乘以3、乘以5，也就是实现了我们最开始的想法，
+     * 只不过不是同时成乘以2、3、5，而是在需要的时候乘以2、3、5.
+     */
+
+    public int GetUglyNumber_Solution(int index) {
+        if(index <= 0)return 0;
+        int p2=0,p3=0,p5=0;//初始化三个指向三个潜在成为最小丑数的位置
+        int[] result = new int[index];
+        result[0] = 1;//
+        for(int i=1; i < index; i++){
+            result[i] = Math.min(result[p2]*2, Math.min(result[p3]*3, result[p5]*5));
+            if(result[i] == result[p2]*2)p2++;//为了防止重复需要三个if都能够走到
+            if(result[i] == result[p3]*3)p3++;//为了防止重复需要三个if都能够走到
+            if(result[i] == result[p5]*5)p5++;//为了防止重复需要三个if都能够走到
+        }
+        return result[index-1];
+    }
+
 
 //35.在一个字符串(1<=字符串长度<=10000，全部由字母组成)中找到第一个只出现一次的字符,并返回它的位置
 //    思路：利用LinkedHashMap保存字符和出现次数。
      
-    public int FirstNotRepeatingChar(String str) {
+    public int firstNotRepeatingChar(String str) {
         if (str == null || str.length() == 0)
             return -1;
         char[] c = str.toCharArray();
@@ -1283,6 +1354,31 @@ public class All {
         return -1;
     }
 
+    /**
+     * 方法2，与方法1类似，用数组保存
+     */
+    public int firstNotRepeatingChar2(String str) {
+        int res = -1;
+        if(str == null || str.length() == 0) {
+            return res;
+        }
+        if(str.length() == 1) {
+            return 1;
+        }
+        char[] charArr = str.toCharArray();
+        int[] count = new int[128];
+
+        for(int i = 0; i < charArr.length ;i++){
+            count[charArr[i]]++;
+        }
+        for(int i = 0; i < count.length;i++){
+            if(count[charArr[i]] == 1){
+                res = i;
+                break;
+            }
+        }
+        return res;
+    }
 
 //36.在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,
 //    求出这个数组中的逆序对的总数P
@@ -1334,7 +1430,7 @@ public class All {
 //    少的方法需要将两个链表遍历两次，然后从头开始相同的节点。
      
     // 不需要遍历链表的解法
-    public ListNode FindFirstCommonNode(ListNode pHead1, ListNode pHead2) {
+    public ListNode findFirstCommonNode(ListNode pHead1, ListNode pHead2) {
         ListNode p1 = pHead1;
         ListNode p2 = pHead2;
         while (p1 != p2){
@@ -1344,39 +1440,47 @@ public class All {
         return p1;
     }
 
-//38.统计一个数字在排序数组中出现的次数。
+//38.统计一个数字在排序数组中出现的次数。 输入[1,2,3,3,3,3,4,5],3 返回4
 //    思路：利用二分查找+递归思想，进行寻找。当目标值与中间值相等时进行判断
-     
-    public int GetNumberOfK(int[] array,int k) {
-        int result=0;
-        int mid = array.length/2;
-        if(array==null || array.length == 0)
-            return 0;
-        if(array.length == 1) {
-            if(array[0] == k)
-                return 1;
-            else
-                return 0;
+
+    public int GetNumberOfK(int[] nums, int K) {
+        if(nums.length <= 0 || nums == null) return 0;
+        int first = binarySearch(nums, K);
+        int last = binarySearch(nums, K+1);
+        return (first == nums.length || nums[first] != K)? 0 : last - first;
+    }
+    private int binarySearch(int[] nums, int K){
+        int low = 0, high = nums.length;
+        while(low < high){
+            int mid = low + (high - low)/2;
+            if(nums[mid] >= K) high = mid;
+            else low = mid + 1;
         }
-        if(k < array[mid])
-        result += GetNumberOfK(Arrays.copyOfRange(array, 0, mid),k);
-        else if(k > array[mid])
-            result += GetNumberOfK(Arrays.copyOfRange(array, mid, array.length),k);
-        else {
-            for(int i = mid;i < array.length;i++) {
-                if(array[i] == k)
-                    result++;
-                else
-                    break;
-            }
-            for(int i = mid - 1;i >= 0;i--) {
-                if(array[i] == k)
-                    result++;
-                else
-                    break;
+        return low;
+    }
+
+    /**
+     * 方法2
+     */
+    public int getNumberOfK2(int [] array , int k) {
+        if(array == null && array.length == 0) return 0;
+
+        return btSearch(array, k + 0.5) - btSearch(array, k - 0.5);
+    }
+    int btSearch(int [] array, double k){
+        int low = 0; int high = array.length -1;
+        while(low<=high){
+            //计算mid位置要放在循环里面
+            int mid = low + (high-low)/2;
+            if(array[mid] < k){
+                low = mid +1;
+            }else if(array[mid] > k){
+                high = mid-1;
+            }else{
+                return low;
             }
         }
-        return result;
+        return low;//return high;也可以
     }
 
 //39.输入一棵二叉树，求该树的深度。从根结点到叶结点依次经过的结点（含根、叶结点）形成树的一条路
@@ -1396,20 +1500,21 @@ public class All {
 //    思路：平衡因子的绝对值<= 1.
      
     public boolean IsBalanced_Solution(TreeNode root) {
-        if (root == null)
+        if (root == null) {
             return true;
+        }
         int left = getDepth(root.left);
         int right = getDepth(root.right);
-        int diff = left - right;
-        if (diff >= -1 && diff <= 1) {
+        if (Math.abs(left - right) <= 1) {
             return true;
         }
         return false;
     }
 
     public int getDepth(TreeNode root) {
-        if (root == null)
+        if (root == null) {
             return 0;
+        }
         int depth = 0;
         int leftNode = getDepth(root.left);
         int rightNode = getDepth(root.right);
@@ -1421,64 +1526,87 @@ public class All {
 //40.一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
 //    思路：两个相同的数异或后为0，将所有数异或后得到一个数，然后求得1在该数最右边出现的index，然后判
 //    断每个数右移index后是不是1。
-     
-    public void FindNumsAppearOnce(int [] array,int num1[] , int num2[]) {
-        if (array == null)
-            return;
-        num1[0] = 0;
-        num2[0] = 0;
-        int number = array[0];
-        for (int i = 1; i < array.length; i++)
-            number ^= array[i];
-        // 异或后的数1出现在第几位
-        int index = 0;
-        while ((number & 1) == 0) {
-            number = number >> 1;
-            index++;
+//   https://leetcode-cn.com/problems/shu-zu-zhong-shu-zi-chu-xian-de-ci-shu-lcof/solution/jie-di-qi-jiang-jie-fen-zu-wei-yun-suan-by-eddievi/
+
+    public int[] singleNumbers(int[] nums) {
+        //xor用来计算nums的异或和
+        int xor = 0;
+
+        // 计算异或和 并存到xor
+        // e.g. [2,4,2,3,3,6] 异或和：(2^2)^(3^3)^(4^6)=2=010
+        for(int num : nums) xor ^= num;
+
+        //设置mask为1，则二进制为0001
+        // mask是一个二进制数，且其中只有一位是1，其他位全是0，比如000010，
+        // 表示我们用倒数第二位作为分组标准，倒数第二位是0的数字分到一组，倒数第二位是1的分到另一组
+        int mask = 1;
+
+        // & operator只有1&1时等于1 其余等于0
+        // 用上面的e.g. 4和6的二进制是不同的 我们从右到左找到第一个不同的位就可以分组 4=0100 6=0110
+        // 根据e.g. 010 & 001 = 000 = 0则 mask=010
+        // 010 & 010 != 0 所以mask=010
+        // 之后就可以用mask来将数组里的两个数分区分开
+        while((xor & mask)==0){
+            mask <<= 1;
         }
-        for (int i = 0; i < array.length; i++) {
-        // 判断第index位是不是0
-            boolean isBit = ((array[i] >> index) & 1) == 0;
-            if (isBit) {
-                num1[0] ^= array[i];
-            } else {
-                num2[0] ^= array[i];
+
+        //两个只出现一次的数字
+        int a=0, b=0;
+
+        for(int num : nums){
+            //根据&是否为0区分将两个数字分区，并分别求异或和
+            if((num & mask)==0) a ^= num;
+            else{
+                b ^= num;
             }
         }
+        return new int[]{a,b};
     }
 
 
 //41.输出所有和为S的连续正数序列。序列内按照从小至大的顺序，序列间按照开始数字从小到大的顺序
-//    思路：定义两个指针，分别递增，寻找和为s的序列。
-     
+    /**
+     思路：
+     输入sum=20（1，2，3，4，5，6，7，8，9，10，11，12，13，14，15
+     1，定义两个指针，左指针从1开始，右指针从2开始
+     循环开始
+     2，求和（1+2 = 3
+     3，如果判断3小于20，右指针++，2变为3，求和3+3=6。循环一直到右指针=6，和为21。
+     4，else if 判断21大于20，左指针++，1变为2，和减去左指针值，和为21-1=20。
+     5，else 和与输入一样，存数。   【再把右指针++，求和，求剩余组合】
+     循环结束
+     */
+
     public ArrayList<ArrayList<Integer>> FindContinuousSequence(int sum) {
-        ArrayList<ArrayList<Integer>> arrayList = new ArrayList<>();
-        ArrayList<Integer> list = new ArrayList<>();
-        if (sum < 3)
-            return arrayList;
-        int small = 1;
-        int big = 2;
-        while (small < (sum + 1) / 2) {
-            int s = 0;
-            for (int i = small; i <= big; i++) {
-                s += i;
-            }
-            if (s == sum) {
-                for (int i = small; i <= big; i++) {
+        ArrayList<ArrayList<Integer>> resp = new ArrayList<>();
+        if(sum <= 0){
+            return resp;
+        }
+        int leftP = 1;
+        int rightP = 2;
+        int sumVal = leftP + rightP;
+
+        while(sum > rightP){
+            if(sumVal < sum){
+                rightP++;
+                sumVal += rightP;
+            } else if (sumVal > sum){
+                sumVal -= leftP;
+                leftP++;
+            } else {
+                ArrayList<Integer> list = new ArrayList<>();
+                for (int i=leftP; i<=rightP; i++) {
                     list.add(i);
                 }
-                arrayList.add(new ArrayList<>(list));
-                list.clear();
-                small++;
-            } else {
-                if (s > sum) {
-                    small++;
-                } else {
-                    big++;
-                }
+                resp.add(list);
+
+                rightP++;
+                sumVal += rightP;
             }
         }
-        return arrayList;
+
+        return resp;
+
     }
 
 
@@ -1510,7 +1638,22 @@ public class All {
     }
 
 
-//42.翻转字符串
+// 41.1题目描述
+// 汇编语言中有一种移位指令叫做循环左移（ROL），现在有个简单的任务，
+// 就是用字符串模拟这个指令的运算结果。对于一个给定的字符序列S，
+// 请你把其循环左移K位后的序列输出。例如，字符序列S=”abcXYZdef”,要求输出循环左移3位后的结果，即“XYZdefabc”。
+
+        public String leftRotateString(String str,int n) {
+            if (n > str.length()) {
+                return "";
+            }
+            String a = str.substring(0,n);
+            String b = str.substring(n,str.length());
+            return b+a;
+        }
+
+
+//42.翻转字符串  “student. a am I” 变成 “I am a student.”
 //    思路：先将整个字符串翻转，然后将每个单词翻转。
      
     public String ReverseSentence(String str) {
@@ -1534,6 +1677,48 @@ public class All {
         }
         return String.valueOf(sb);
     }
+
+    /**
+     * 方法2
+     * @param str
+     * @return
+     */
+    public String reverseSentence2(String str) {
+        if (str == null || str.length() == 0)
+            return str;
+        char[] arr = str.toCharArray();//转换成字符数组
+        reverse(arr, 0, arr.length - 1);//先全部翻转一次
+        int start = 0;//指向单词第一个字母
+        int end = 0;//指向单词最后一个字母
+        while (start < arr.length) {
+            if (arr[start] == ' ') {
+                //如果start指向的是空格，就换下一个，因为指针要指向的是单词。
+                start++;
+                end++;
+            } else if (end == arr.length || arr[end] == ' ') {
+                //要么尾部是空格，要么end刚刚超过数组最后一个角标，这两种情况就应该翻转了
+                //end之所以会超过最后角标，是因为当最后一个字符不是空格时，会让end++，所以会越界
+                reverse(arr, start, end-1);
+                //翻转后，应该重新记录下个单词，因此更新end和start。
+                end++;
+                start = end;//这句和上一句可以写成start = ++end;
+            } else {
+                //到这里就说明，start指的不是空格，end也指的不是空格，说明是正常单词，end++即可
+                end++;
+            }
+        }
+        return String.valueOf(arr);
+    }
+    private void reverse(char[] arr, int begin, int end){
+        while(begin<end){
+            char temp = arr[begin];
+            arr[begin] = arr[end];
+            arr[end] = temp;
+            begin++;
+            end--;
+        }
+    }
+
 
 
 //42.1对于一个给定的字符序列S，请你把其循环左移K位后的序列输出
@@ -1588,8 +1773,14 @@ public class All {
     }
 
 
-//44.扑克牌的顺子
-//    思路：用数组记录五张扑克牌，将数组调整为有序的，若0出现的次数>=顺子的差值，即为顺子。
+//44.扑克牌的顺子。LL今天心情特别好,因为他去买了一副扑克牌,发现里面居然有2个大王,2个小王(一副牌原本是54张^_^)...
+// 他随机从中抽出了5张牌,想测测自己的手气,看看能不能抽到顺子,如果抽到的话,他决定去买体育彩票,
+// 嘿嘿！！“红心A,黑桃3,小王,大王,方片5”,“Oh My God!”不是顺子.....LL不高兴了,
+// 他想了想,决定大\小 王可以看成任何数字,并且A看作1,J为11,Q为12,K为13。
+// 上面的5张牌就可以变成“1,2,3,4,5”(大小王分别看作2和4),“So Lucky!”。LL决定去买体育彩票啦。
+// 现在,要求你使用这幅牌模拟上面的过程,然后告诉我们LL的运气如何， 如果牌能组成顺子就输出true，
+// 否则就输出false。为了方便起见,你可以认为大小王是0。
+// 思路：用数组记录五张扑克牌，将数组调整为有序的，若0出现的次数>=顺子的差值，即为顺子。
      
     public boolean isContinuous(int [] numbers) {
         if (numbers == null || numbers.length == 0)
@@ -1613,48 +1804,111 @@ public class All {
     }
 
 
-//45.圆圈中最后剩下的数字（约瑟夫环）
-//    思路：利用循环链表实现
-     
-    public int LastRemaining_Solution(int n, int m) {
-        LinkedList<Integer> list = new LinkedList<Integer>();
-        int bt = 0;
-        for (int i = 0; i < n; i ++) {
-            list.add(i);
+    /**
+     * 方法2
+     * 可以这么理解，简单来说就是要是5个数字，最大和最小差值在5以内，并且没有重复数值。
+     * 用一个set来填充数据，0不要放进去。set的大小加上0的个数必须为5个。此外set中数值差值在5以内。
+     * @return
+     */
+    public boolean isContinuous(int [] n) {
+        if (n.length < 5 || n.length > 5) {
+            return false;
         }
-        while (list.size() > 1) {
-            bt = (bt + m - 1) % list.size();
-            list.remove(bt);
+        int num = 0;
+        TreeSet<Integer> set = new TreeSet<>();
+        for (int i = 0; i < n.length; i++) {
+            if (n[i] == 0) {
+                num++;
+            } else {
+                set.add(n[i]);
+            }
         }
-        return list.size() == 1 ? list.get(0) : -1;
+        if ((num + set.size()) != 5) {
+            return false;
+        }
+        if ((set.last() - set.first()) < 5) {
+            return true;
+        }
+        return false;
     }
+
+//45.圆圈中最后剩下的数字（约瑟夫环） 每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。
+// HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。
+// 然后,他随机指定一个数m,让编号为0的小朋友开始报数。
+// 每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,
+// 并且不再回到圈中,从他的下一个小朋友开始,继续0...m-1报数....这样下去....直到剩下最后一个小朋友,
+// 可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,
+// 哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)
+//    思路：利用循环链表实现
+
+        public int LastRemaining_Solution ( int n, int m){
+            LinkedList<Integer> list = new LinkedList<Integer>();
+            int bt = 0;
+            for (int i = 0; i < n; i++) {
+                list.add(i);
+            }
+            while (list.size() > 1) {
+                bt = (bt + m - 1) % list.size();
+                list.remove(bt);
+            }
+            return list.size() == 1 ? list.get(0) : -1;
+        }
+
+        /**
+         * 方法2
+         */
+        public int LastRemaining_Solution ( int n, int m){
+            if (n == 0 || m == 0) return -1;
+            int s = 0;
+            for (int i = 2; i <= n; i++) {
+                s = (s + m) % i;
+            }
+            return s;
+        }
 
 
 //46.求1+2+3+...+n，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?
 //    B:C）。
 //    思路：巧用递归（返回值类型为Boolean）
-     
-    public int Sum_Solution(int n) {
-        int sum = n;
-        boolean result = (n > 0) && ((sum += Sum_Solution(n-1)) > 0);
-        return sum;
-    }
+
+        public int Sum_Solution ( int n){
+            int sum = 0;
+            if (n <= 1) {
+                return n;
+            } else {
+                sum = n;
+                sum += Sum_Solution(n - 1);
+            }
+            return sum;
+        }
 
 
 //47.写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。
 //    思路：利用位运算
-     
-    public int Add(int num1,int num2) {
-        while (num2 != 0) {
-            // 计算个位
-            int temp = num1 ^ num2;
-            // 计算进位（1+1）
-            num2 = (num1 & num2) << 1;
-            num1 = temp;
-        }
-        return num1;
-    }
 
+        public int Add ( int num1, int num2){
+            while (num2 != 0) {
+                // 计算个位
+                int temp = num1 ^ num2;
+                // 计算进位（1+1）
+                num2 = (num1 & num2) << 1;
+                num1 = temp;
+            }
+            return num1;
+        }
+
+    // 方法2
+    public int Add2 ( int num1, int num2){
+        int result = 0;
+        int carry = 0;
+        do {
+            result = num1 ^ num2;       //不带进位的加法
+            carry = (num1 & num2) << 1; //进位
+            num1 = result;
+            num2 = carry;
+        } while (carry != 0); // 进位不为0则继续执行加法处理进位
+        return result;
+    }
 
 
 //49.将一个字符串转换成一个整数，要求不能使用字符串转换整数的库函数。 数值为0或者字符串不是一个合法
@@ -1681,6 +1935,32 @@ public class All {
         return mark == 0 ? number : -number;
     }
 
+    /**
+     * 方法2
+     */
+    public int StrToInt2(String str) {
+        if (str == null || "".equals(str)){
+            return 0;
+        }
+        boolean flag = true;
+        if (str.charAt(0)=='-' || str.charAt(0)=='+'){
+            flag = str.charAt(0) =='-' ? false:true;
+            str = str.substring(1);
+        }
+        char[] chs = str.toCharArray();
+        int res = 0;
+        for (int i = 0; i < chs.length; i++) {
+            int cur = chs[i] - '0';
+            if (cur>9){
+                return 0;
+            }
+            res = res*10 + cur;
+        }
+        if (!flag){
+            return -res;
+        }
+        return res;
+    }
 
 //50.求树中两个节点的最低公共祖先
 //（1）树是二叉搜索树
@@ -1689,67 +1969,70 @@ public class All {
 //    根的左子树。如果根节点正好是其中的一个节点，那么说明这两个节点在一条路径上，所以最低公共祖先则是
 //    根节点的父节点，时间复杂度是O(logn)，空间复杂度是O(1)
      
-//    public static BinaryTreeNode getLowestCommonAncestor(BinaryTreeNode rootParent,BinaryTreeNode root,
-//                                                         BinaryTreeNode node1,BinaryTreeNode node2){
-//        if(root == null || node1 == null || node2 == null){
-//            return null;
-//        }
-//        if((root.value - node1.value)*(root.value - node2.value) < 0){
-//            return root;
-//        }else if((root.value - node1.value)*(root.value - node2.value) > 0){
-//            BinaryTreeNode newRoot = ((root.value > node1.value) && (root.value > node2.value))
-//                    ? root.leftNode : root.rightNode;
-//            return getLowestCommonAncestor(root,newRoot, node1, node2);
-//        }else{
-//            return rootParent;
-//        }
-//    }
+    public  TreeNode getLowestCommonAncestor(TreeNode rootParent,TreeNode root,
+                                                   TreeNode node1,TreeNode node2){
+        if(root == null || node1 == null || node2 == null){
+            return null;
+        }
+        if((root.val - node1.val)*(root.val - node2.val) < 0){
+            return root;
+        }else if((root.val - node1.val)*(root.val - node2.val) > 0){
+            TreeNode newRoot = ((root.val > node1.val) && (root.val > node2.val))
+                    ? root.left : root.right;
+            return getLowestCommonAncestor(root,newRoot, node1, node2);
+        }else{
+            return rootParent;
+        }
+    }
 
 
 //（2）若树是普通树，但有指向父节点的指针
 //    思路：两个节点如果在两条路径上，类似于求两个链表的第一个公共节点。由于每个节点的深度最多为logn，
 //    所以时间复杂度为O(logn),空间复杂度O(1)
-     
-//    public static BinaryTreeNode getLowestCommonAncestor1(BinaryTreeNode root,BinaryTreeNode node1,
-//                                                          BinaryTreeNode node2){
-//        if(root == null || node1 == null || node2 == null){
-//            return null;
-//        }
-//        int depth1 = findTheDepthOfTheNode(root, node1, node2);
-//        if(depth1 == -1){
-//            return node2.parentNode;
-//        }
-//        int depth2 = findTheDepthOfTheNode(root, node2, node1);
-//        if(depth2 == -1){
-//            return node1.parentNode;
-//        }
-//        //p指向较深的节点q指向较浅的节点
-//        BinaryTreeNode p = depth1 > depth2 ? node1 : node2;
-//        BinaryTreeNode q = depth1 > depth2 ? node2 : node1;
-//        int depth = Math.abs(depth1 - depth2);
-//        while(depth > 0){
-//            p = p.parentNode;
-//            depth --;
-//        }
-//        while(p != q){
-//            p = p.parentNode;
-//            q = q.parentNode;
-//        }
-//        return p;
-//    }
-//    //求node1的深度，如果node1和node2在一条路径上，则返回-1，否则返回node1的深度
-//    public static int findTheDepthOfTheNode(BinaryTreeNode root,BinaryTreeNode node1,
-//                                            BinaryTreeNode node2){
-//        int depth = 0;
-//        while(node1.parentNode != null){
-//            node1 = node1.parentNode;
-//            depth ++;
-//            if(node1 == node2){
-//                return -1;
-//            }
-//        }
-//        return depth;
-//    }
+
+    class BinaryTreeNode {
+        BinaryTreeNode parentNode;
+    }
+    public  BinaryTreeNode getLowestCommonAncestor1(BinaryTreeNode root,BinaryTreeNode node1,
+                                                          BinaryTreeNode node2){
+        if(root == null || node1 == null || node2 == null){
+            return null;
+        }
+        int depth1 = findTheDepthOfTheNode(root, node1, node2);
+        if(depth1 == -1){
+            return node2.parentNode;
+        }
+        int depth2 = findTheDepthOfTheNode(root, node2, node1);
+        if(depth2 == -1){
+            return node1.parentNode;
+        }
+        //p指向较深的节点q指向较浅的节点
+        BinaryTreeNode p = depth1 > depth2 ? node1 : node2;
+        BinaryTreeNode q = depth1 > depth2 ? node2 : node1;
+        int depth = Math.abs(depth1 - depth2);
+        while(depth > 0){
+            p = p.parentNode;
+            depth --;
+        }
+        while(p != q){
+            p = p.parentNode;
+            q = q.parentNode;
+        }
+        return p;
+    }
+    //求node1的深度，如果node1和node2在一条路径上，则返回-1，否则返回node1的深度
+    public static int findTheDepthOfTheNode(BinaryTreeNode root,BinaryTreeNode node1,
+                                            BinaryTreeNode node2){
+        int depth = 0;
+        while(node1.parentNode != null){
+            node1 = node1.parentNode;
+            depth ++;
+            if(node1 == node2){
+                return -1;
+            }
+        }
+        return depth;
+    }
 
 //（3）若树是普通树，并没有指向父节点的指针
 //    思路：用栈来实现类似于指向父节点指针的功能，获取node节点的路径时间复杂度为O(n),所以总的时间复杂
@@ -1812,6 +2095,7 @@ public class All {
 //        return found;
 //    }
 
+
 //51.在一个长度为n的数组里的所有数字都在0到n-1的范围内，找出数组中任意一个重复的数字
 //    思路：若下标大于length，则减去length，最后再加上length，若下标的数组值大于length，则返回true。或使
 //    用辅助空间（HashSet）
@@ -1867,7 +2151,7 @@ public class All {
     public boolean match(char[] str, char[] pattern) {
         if (str == null || pattern == null)
             return false;
-// 若字符串的长度为1
+        // 若字符串的长度为1
         if (str.length == 1) {
             if (pattern.length == 1){
                 if (str[0] == pattern[0] || pattern[0] == '.')
@@ -2000,23 +2284,23 @@ public class All {
     public ListNode deleteDuplication(ListNode pHead) {
         if (pHead == null)
             return null;
-// 新建一个节点，防止头结点被删除
+        // 新建一个节点，防止头结点被删除
         ListNode first = new ListNode(-1);
         first.next = pHead;
         ListNode p = pHead;
-// 指向前一个节点
+        // 指向前一个节点
         ListNode preNode = first;
         while (p != null && p.next != null) {
             if (p.val == p.next.val) {
                 int val = p.val;
-// 向后重复查找
+                // 向后重复查找
                 while (p != null && p.val == val) {
                     p = p.next;
                 }
                 // 上个非重复值指向下一个非重复值：即删除重复值
                 preNode.next = p;
             }else {
-// 如果当前节点和下一个节点值不等，则向后移动一位
+                // 如果当前节点和下一个节点值不等，则向后移动一位
                 preNode = p;
                 p = p.next;
             }
@@ -2031,7 +2315,7 @@ public class All {
 //    节点即为下一个节点；若节点不是根节点。如果该节点是其父节点的左孩子，则返回父节点；否则继续向上遍
 //    历其父节点的父节点，重复之前的判断，返回结果
 
-    static class TreeLinkNode {
+    class TreeLinkNode {
         TreeLinkNode right;
         TreeLinkNode left;
         TreeLinkNode next;
@@ -2234,7 +2518,7 @@ public class All {
     public Double GetMedian() {
         if (count3 == 0)
             return null;
-// 当数据个数是奇数时，中位数就是大根堆的顶点
+        // 当数据个数是奇数时，中位数就是大根堆的顶点
         if ((count3 & 1) == 1) {
             return Double.valueOf(maxHeap.peek());
         } else {
@@ -2263,6 +2547,37 @@ public class All {
             list.add(max);
         }
         return list;
+    }
+
+    // 方法2
+    public ArrayList<Integer> maxInWindows2(int [] num, int size)
+    {
+        //思路时=是，一个双向链表存储小标，当当前元素比下标小时，入队列，大时，遍历队列，比该元素小时就舍弃，然后入队列
+        //begin记录滑动窗口左边
+        ArrayList res= new ArrayList<>();
+        if(num==null||size==0||num.length<size){
+            return res;
+        }
+        int begin=0;
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        for(int i=0;i<num.length;i++){
+            begin=i-size+1;//代表滑动窗口的起点
+            if(queue.isEmpty()){
+                queue.add(i);
+            }else if(begin>queue.peekFirst()){
+                queue.pollFirst();
+            }
+
+            while(!queue.isEmpty()&&num[i]>= num[queue.peekLast()]){
+                queue.pollLast();
+            }
+
+            queue.add(i);
+            if(begin>=0){
+                res.add(num[queue.peekFirst()]);
+            }
+        }
+        return res;
     }
 
 
