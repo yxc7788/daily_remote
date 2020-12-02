@@ -916,7 +916,37 @@ public class All {
 //27.输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调
 //    整树中结点指针的指向。
 //    思路：定义一个链表的尾节点，递归处理左右子树，最后返回链表的头节点
-     
+
+    /**
+     * 方法1   https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/solution/mian-shi-ti-36-er-cha-sou-suo-shu-yu-shuang-xian-5/
+     */
+    TreeNode pre, head;
+    public TreeNode treeToDoublyList(TreeNode root) {
+        if(root == null) {
+            return null;
+        }
+        dfs(root);
+        head.left = pre;
+        pre.right = head;
+        return head;
+    }
+    void dfs(TreeNode cur) {
+        if(cur == null) {
+            return;
+        }
+        dfs(cur.left);
+        if(pre != null)  {
+            pre.right = cur;
+        }
+        else {
+            head = cur;
+        }
+        cur.left = pre;
+        pre = cur;
+        dfs(cur.right);
+    }
+
+
     public TreeNode Convert(TreeNode pRootOfTree) {
         TreeNode lastlist = covertNode(pRootOfTree,null);
         TreeNode pHead = lastlist;
