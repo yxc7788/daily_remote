@@ -2437,7 +2437,12 @@ public class All {
         } return res;
     }
 
-//62.请实现两个函数，分别用来序列化和反序列化二叉树
+//62.请实现两个函数，分别用来序列化和反序列化二叉树，二叉树的序列化是指：
+// 把一棵二叉树按照某种遍历方式的结果以某种格式保存为字符串，从而使得内存中建立起来的二叉树可以持久保存。
+// 序列化可以基于先序、中序、后序、层序的二叉树遍历方式来进行修改，序列化的结果是一个字符串，
+// 序列化时通过 某种符号表示空节点（#），以 ！ 表示一个结点值的结束（value!）。
+//二叉树的反序列化是指：根据某种遍历顺序得到的序列化字符串结果str，重构二叉树。
+//例如，我们可以把一个只有根节点为1的二叉树序列化为"1,"，然后通过自己的函数来解析回这个二叉树
 //    思路：序列化：前序遍历二叉树存入字符串中；反序列化：根据前序遍历重建二叉树。
      
     public String Serialize(TreeNode root) {
@@ -2466,6 +2471,48 @@ public class All {
         }
         return node;
     }
+
+
+    public String rserialize(TreeNode root, String str) {
+        if (root == null) {
+            str += "None,";
+        } else {
+            str += str.valueOf(root.val) + ",";
+            str = rserialize(root.left, str);
+            str = rserialize(root.right, str);
+        }
+        return str;
+    }
+
+    public String serialize(TreeNode root) {
+        return rserialize(root, "");
+    }
+
+    /**
+     * 方法2
+     * @param l
+     * @return
+     */
+    public TreeNode rdeserialize(List<String> l) {
+        if (l.get(0).equals("None")) {
+            l.remove(0);
+            return null;
+        }
+
+        TreeNode root = new TreeNode(Integer.valueOf(l.get(0)));
+        l.remove(0);
+        root.left = rdeserialize(l);
+        root.right = rdeserialize(l);
+
+        return root;
+    }
+
+    public TreeNode deserialize(String data) {
+        String[] data_array = data.split(",");
+        List<String> data_list = new LinkedList<String>(Arrays.asList(data_array));
+        return rdeserialize(data_list);
+    }
+
 
 
 //63.给定一颗二叉搜索树，请找出其中的第k大的结点
@@ -2615,8 +2662,10 @@ public class All {
     }
 
 
-//67.地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，每一次只能向左，右，上，下四个方
-//    向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。
+//67. 地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，
+//    每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。
+//    例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），
+//    因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
 //    思路：利用递归实现，每次只能走上下左右四个点，进行判断点的位置是否越界，点数之和是否大于K，是否
 //    已经走过了。
      
@@ -2642,4 +2691,119 @@ public class All {
         }
         return sum;
     }
+
+    /**
+     * k个一组翻转链表
+     * https://zhuanlan.zhihu.com/p/90170262  这个例子不错
+     */
+    ListNode reverseKGroup(ListNode head, int k) {
+        if (head == null) return null;
+        // 区间 [a, b) 包含 k 个待反转元素
+        ListNode a, b;
+        a = b = head;
+        for (int i = 0; i < k; i++) {
+            // 不足 k 个，不需要反转，base case
+            if (b == null) return head;
+            b = b.next;
+        }
+        // 反转前 k 个元素
+        ListNode newHead = reverse(a, b);
+        // 递归反转后续链表并连接起来
+        a.next = reverseKGroup(b, k);
+        return newHead;
+    }
+
+    /** 反转区间 [a, b) 的元素，注意是左闭右开 */
+    ListNode reverse(ListNode a, ListNode b) {
+        ListNode pre, cur, nxt;
+        pre = null; cur = a; nxt = a;
+        // while 终止的条件改一下就行了
+        while (cur != b) {
+            nxt = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = nxt;
+        }
+        // 返回反转后的头结点
+        return pre;
+    }
+
+    /**
+     * 剪绳子：给你一根长度为n的绳子，请把绳子剪成整数长的m段（m、n都是整数，n>1并且m>1，m<=n），
+     * 每段绳子的长度记为k[1],...,k[m]。请问k[1]x...xk[m]可能的最大乘积是多少？例如，当绳子的长度是8时，
+     * 我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+     */
+    private static int cutRope(int target) {
+        int a = 0;
+        int c = 0;
+        int maxValue = 2;
+        if (target == 2) {
+            return 1;
+        }
+        if (target == 3) {
+            return 2;
+        }
+        if (target % 3 == 0) {
+            maxValue = (int)Math.pow(3, target / 3);
+        } else{
+            a = target - 2;
+            c = a % 3;
+
+            maxValue = maxValue * (int)Math.pow(3, a / 3);
+            if (0 != c) {
+                maxValue = maxValue * c;
+            }
+        }
+        return maxValue;
+    }
+
+
+    /**
+     * 二叉树的下一个节点，给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。
+     * 注意，树中的结点不仅包含左右子结点，同时包含指向父结点的指针。
+     *
+     */
+    TreeLinkNode getNext(TreeLinkNode node)
+    {
+        if(node==null) return null;
+        if(node.right!=null){    //如果有右子树，则找右子树的最左节点
+            node = node.right;
+            while(node.left!=null) node = node.left;
+            return node;
+        }
+        while(node.next!=null){ //没右子树，则找第一个当前节点是父节点左孩子的节点
+            if(node.next.left==node) return node.next;
+            node = node.next;
+        }
+        return null;   //退到了根节点仍没找到，则返回null
+    }
+
+
+    /**
+     * 方法2
+     */
+    public TreeLinkNode getNext2(TreeLinkNode pNode)
+    {
+        if (pNode == null) return null;
+        // 若给定节点 有右子树， 则返回的一定是 右子树 最左边的节点
+        if (pNode.right != null) {
+            pNode = pNode.right;
+            while (pNode.left != null) {
+                pNode = pNode.left;
+            }
+            return pNode;
+        }
+
+        // 若没有右子树 则返回的是 父亲节点
+        while (pNode.next != null) {
+            if (pNode.next.left == pNode) { // 父亲节点的左节点等于本身，且本身没有右节点，那么直接返回父节点
+                return pNode.next;
+            }
+            pNode = pNode.next; // 父亲节点的左节点不等于本身，说明本身在父节点的右子节点，继续遍历父亲节点的父节点
+        }
+        return null;
+    }
 }
+
+
+
