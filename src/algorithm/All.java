@@ -981,7 +981,7 @@ public class All {
 
 //    28.输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所
 //    能排列出来的所有字符串abc,acb,bac,bca,cab和cba。
-//    思路：将当前位置的字符和前一个字符位置交换，递归。
+//    思路：将当前位置的字符和前一个字符位置交换，递归。 参考了leetcode 46题 全排列
 
 
     // https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/solution/mian-shi-ti-38-zi-fu-chuan-de-pai-lie-hui-su-fa-by/
