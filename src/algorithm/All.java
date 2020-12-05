@@ -760,59 +760,52 @@ public class All {
     
 //24.输入一个整数数组，判断该数组是不是某二叉搜索树的后序遍历的结果。如果是则输出Yes,否则输出No。
 //    假设输入的数组的任意两个数字都互不相同。
-//    思路：先找到右子树的开始位置，然后分别进行左右子树递归处理。
+//    思路：先找到右子树的开始位置，然后分别进行左右子树递归处理//
 
-    public boolean VerifySquenceOfBST(int[] sequence) {
-        if (sequence == null || sequence.length == 0)
+
+    /**
+     * 视频 https://www.bilibili.com/video/BV1X7411q7Bw?from=search&seid=8618154083623109926
+     * @param sequence
+     * @return
+     */
+    public boolean VerifySquenceOfBST(int [] sequence) {
+        if(sequence.length == 0){
             return false;
-        int rstart = 0;
-        int length = sequence.length;
-        for (int i = 0; i < length - 1; i++) {
-            if (sequence[i] < sequence[length - 1])
-                rstart++;
         }
-        if (rstart == 0) {
-            VerifySquenceOfBST(Arrays.copyOfRange(sequence,0,length-1));
-        }else {
-            for (int i = rstart; i < length - 1; i++) {
-                if (sequence[i] <= sequence[length - 1]) {
-                    return false;
-                }
-            }
-            VerifySquenceOfBST(Arrays.copyOfRange(sequence,0,rstart));
-            VerifySquenceOfBST(Arrays.copyOfRange(sequence,rstart,length - 1));
+        if(sequence.length == 1){
+            return true;
         }
-        return true;
+        return judge(sequence,0,sequence.length-1);
     }
+
+    public boolean judge(int[] a,int start,int end){
+        if(start >= end){
+            return true;
+        }
+        int i = start;
+        while(a[i] < a[end]){
+            ++i;
+        }
+        for(int j=i;j<end;j++){
+            if(a[j] < a[end]){
+                return false;
+            }
+        }
+        return judge(a,start,i-1) && judge(a,i,end-1);
+    }
+
 
 //25.输入一颗二叉树和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结
 //    点开始往下一直到叶结点所经过的结点形成一条路径。
 //    思路：先保存根节点，然后分别递归在左右子树中找目标值，若找到即到达叶子节点，打印路径中的值
 
-    ArrayList<ArrayList<Integer>> resultList;
-    ArrayList<Integer> list = new ArrayList<>();
-    public ArrayList<ArrayList<Integer>> FindPath(TreeNode root,int target) {
-        if(root == null)
-            return resultList;
-        list.add(root.val);
-        target -= root.val;
-        if(target == 0 && root.left == null && root.right == null){
-            resultList.add(new ArrayList<>(list));
-        }else {
-            FindPath(root.left,target);
-            FindPath(root.right,target);
-        }
-        //每返回上一层一次就要回退一个节点
-        list.remove(list.size()-1);
-        return resultList;
-    }
 
     /**
-     * 方法2
+     * 方法 方法中存在先序遍历
      */
     private ArrayList<ArrayList<Integer>> paths = new ArrayList<ArrayList<Integer>>();
     private Stack<Integer> path = new Stack<Integer>();
-    public ArrayList<ArrayList<Integer>> FindPath2(TreeNode root,int target) {
+    public ArrayList<ArrayList<Integer>> findPath(TreeNode root,int target) {
         if(root == null){
             return paths;
         }
@@ -821,8 +814,8 @@ public class All {
         if(target == 0 && root.left == null && root.right == null){
             paths.add(new ArrayList<Integer>(path));
         }
-        FindPath(root.left, target);
-        FindPath(root.right, target);
+        findPath(root.left, target);
+        findPath(root.right, target);
         path.pop();
         return paths;
     }
@@ -916,68 +909,38 @@ public class All {
 
 
 
-//27.输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调
+//27.二叉搜索树与双向链表，输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调
 //    整树中结点指针的指向。
-//    思路：定义一个链表的尾节点，递归处理左右子树，最后返回链表的头节点
+//    思路：中序遍历
+
+    public TreeNode convert(TreeNode pRootOfTree) {
+        if(pRootOfTree == null){
+            return null;
+        }
+        ArrayList<TreeNode> list = new ArrayList<>();
+        midOrder(pRootOfTree,list);
+        // 遍历list中的节点，改变指向
+        for(int i = 0; i < list.size() - 1; ++i){
+            list.get(i).right = list.get(i + 1);
+            list.get(i + 1).left = list.get(i);
+        }
+        return list.get(0);
+    }
 
     /**
-     * 方法1   https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/solution/mian-shi-ti-36-er-cha-sou-suo-shu-yu-shuang-xian-5/
+     * 中序遍历二叉树，然后讲元素添加到list
      */
-    TreeNode head, pre;
-    public TreeNode treeToDoublyList(TreeNode root) {
-        if(root==null) return null;
-        dfs(root);
-        pre.right = head;
-        head.left =pre;//进行头节点和尾节点的相互指向，这两句的顺序也是可以颠倒的
-        return head;
-    }
-
-    public void dfs(TreeNode cur){
-        if(cur==null) return;
-        dfs(cur.left);
-
-        //pre用于记录双向链表中位于cur左侧的节点，即上一次迭代中的cur,当pre==null时，cur左侧没有节点,即此时cur为双向链表中的头节点
-        if(pre==null) head = cur;
-            //反之，pre!=null时，cur左侧存在节点pre，需要进行pre.right=cur的操作。
-        else pre.right = cur;
-
-        cur.left = pre;//pre是否为null对这句没有影响,且这句放在上面两句if else之前也是可以的。
-
-        pre = cur;//pre指向当前的cur
-        dfs(cur.right);//全部迭代完成后，pre指向双向链表中的尾节点
-    }
-
-//    方法一：非递归版
-//    解题思路：
-//     1.核心是中序遍历的非递归算法。
-//     2.修改当前遍历节点与前一遍历节点的指针指向。
-
-    public TreeNode convertBSTToBiList(TreeNode root) {
-        if(root==null)
-            return null;
-        Stack<TreeNode> stack = new Stack<TreeNode>();
-        TreeNode p = root;
-        TreeNode pre = null;// 用于保存中序遍历序列的上一节点
-        boolean isFirst = true;
-        while(p!=null||!stack.isEmpty()){
-            while(p!=null){
-                stack.push(p);
-                p = p.left;
-            }
-            p = stack.pop();
-            if(isFirst){
-                root = p;// 将中序遍历序列中的第一个节点记为root
-                pre = root;
-                isFirst = false;
-            }else{
-                pre.right = p;
-                p.left = pre;
-                pre = p;
-            }
-            p = p.right;
+    public void midOrder(TreeNode pRootOfTree, ArrayList<TreeNode> list){
+        if(pRootOfTree.left != null){
+            midOrder(pRootOfTree.left,list);
         }
-        return root;
+        list.add(pRootOfTree);
+        if(pRootOfTree.right != null){
+            midOrder(pRootOfTree.right,list);
+        }
     }
+
+
 
 //    28.输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所
 //    能排列出来的所有字符串abc,acb,bac,bca,cab和cba。
@@ -1191,22 +1154,45 @@ public class All {
 // 思路：若百位上数字为0，百位上可能出现1的次数由更高位决定；若百位上数字为1，百位上可能出现1的次数
 // 不仅受更高位影响还受低位影响；若百位上数字大于1，则百位上出现1的情况仅由更高位决定
 
-   //https://www.cnblogs.com/xuanxufeng/p/6854105.html
 
-
-
-    //解法二：公式法
-    public int NumberOf1Between1AndN_Solution(int n){
-        int count=0;
-        for(int i = 1; i <= n; i *= 10){
-            int a = n / i; // 高位
-            int b = n % i; // 低位
-            count += (a+8) / 10 * i;
-            if(a % 10 == 1){
-                count += b + 1;
+    /*
+    设N = abcde ,其中abcde分别为十进制中各位上的数字。
+    如果要计算百位上1出现的次数，它要受到3方面的影响：百位上的数字，百位以下（低位）的数字，百位以上（高位）的数字。
+    ① 如果百位上数字为0，百位上可能出现1的次数由更高位决定。比如：12013，
+    则可以知道百位出现1的情况可能是：100~199，1100~1199,2100~2199，，...，11100~11199，
+    一共1200个。可以看出是由更高位数字（12）决定，并且等于更高位数字（12）乘以 当前位数（100）。
+    ② 如果百位上数字为1，百位上可能出现1的次数不仅受更高位影响还受低位影响。比如：12113，
+    则可以知道百位受高位影响出现的情况是：100~199，1100~1199,2100~2199，，....，11100~11199，一共1200个。
+    和上面情况一样，并且等于更高位数字（12）乘以 当前位数（100）。但同时它还受低位影响，百位出现1的情况是：12100~12113,一共114个，
+    等于低位数字（113）+1。
+    ③如果百位上数字大于1（2~9），则百位上出现1的情况仅由更高位决定，比如12213，
+    则百位出现1的情况是：100~199,1100~1199，2100~2199，...，11100~11199,12100~12199,
+    一共有1300个，并且等于更高位数字+1（12+1）乘以当前位数（100）。
+    */
+    public class Solution {
+        public int NumberOf1Between1AndN_Solution(int n) {
+            int count = 0;//1的个数
+            int i = 1;//当前位
+            int current = 0,after = 0,before = 0;
+            while((n/i)!= 0){
+                current = (n/i)%10; //高位数字
+                before = n/(i*10); //当前位数字
+                after = n-(n/i)*i; //低位数字
+                //如果为0,出现1的次数由高位决定,等于高位数字 * 当前位数
+                if (current == 0)
+                    count += before*i;
+                    //如果为1,出现1的次数由高位和低位决定,高位*当前位+低位+1
+                else if(current == 1)
+                    count += before * i + after + 1;
+                    //如果大于1,出现1的次数由高位决定,//（高位数字+1）* 当前位数
+                else{
+                    count += (before + 1) * i;
+                }
+                //前移一位
+                i = i*10;
             }
+            return count;
         }
-        return count;
     }
 
     /**
@@ -1384,7 +1370,51 @@ public class All {
 //    求出这个数组中的逆序对的总数P
 //    思路：本质是归并排序，在比较时加入全局变量count进行记录逆序对的个数，若data[start] >= data[index] ，
 //    则count值为mid+1-start
-     
+
+    /**
+     * 方法1
+     */
+    public static int inversePairs(int [] array) {
+        if(array == null) return 0;
+        int[] tmp = new int[array.length];
+        return mergeSort(array, tmp, 0, array.length-1);
+    }
+    //归并排序，递归
+    private static int mergeSort(int[] array, int[] tmp, int low, int high) {
+        if(low >= high) return 0;
+        int res = 0, mid = low + (high - low) / 2;
+        res += mergeSort(array, tmp, low, mid);
+        res %= 1000000007;
+        res += mergeSort(array, tmp, mid + 1, high);
+        res %= 1000000007;
+        res += merge(array, tmp, low, mid, high);
+        res %= 1000000007;
+        return res;
+    }
+    //归并排序，合并
+    private static int merge(int[] array, int[] tmp, int low, int mid, int high) {
+        int i1 = low, i2 = mid + 1,k = low;
+        int res = 0;
+        while(i1 <= mid && i2 <= high) {
+            if(array[i1] > array[i2]) {
+                res += mid - i1 + 1;
+                res %= 1000000007;
+                tmp[k++] = array[i2++];
+            } else
+                tmp[k++] = array[i1++];
+        }
+        while(i1 <= mid)
+            tmp[k++] = array[i1++];
+        while(i2 <= high)
+            tmp[k++] = array[i2++];
+        for (int i = low; i <= high; i++)
+            array[i] = tmp[i];
+        return res;
+    }
+
+    /**
+     * 方法2
+     */
     int count = 0;
     public int InversePairs(int [] array) {
         if(array==null)
@@ -1442,9 +1472,78 @@ public class All {
 
 //38.统计一个数字在排序数组中出现的次数。 输入[1,2,3,3,3,3,4,5],3 返回4
 //    思路：利用二分查找+递归思想，进行寻找。当目标值与中间值相等时进行判断
+//    https://leetcode-cn.com/problems/find-first-and-last-position-of-element-in-sorted-array/solution/si-lu-hen-jian-dan-xi-jie-fei-mo-gui-de-er-fen-cha/
 
-    public int GetNumberOfK(int[] nums, int K) {
-        if(nums.length <= 0 || nums == null) return 0;
+    public int[] searchRange(int[] nums, int target) {
+        int len = nums.length;
+        if (len == 0) {
+            return new int[]{-1, -1};
+        }
+
+        int firstPosition = findFirstPosition(nums, target);
+        if (firstPosition == -1) {
+            return new int[]{-1, -1};
+        }
+
+        int lastPosition = findLastPosition(nums, target);
+        return new int[]{firstPosition, lastPosition};
+    }
+
+    private int findFirstPosition(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            int mid = left + (right - left) / 2;
+            // 小于一定不是解
+            if (nums[mid] < target) {
+                // 下一轮搜索区间是 [mid + 1, right]
+                left = mid + 1;
+            } else if (nums[mid] == target) {
+                // 下一轮搜索区间是 [left, mid]
+                right = mid;
+            } else {
+                // nums[mid] > target，下一轮搜索区间是 [left, mid - 1]
+                right = mid - 1;
+            }
+        }
+
+        if (nums[left] == target) {
+            return left;
+        }
+        return -1;
+    }
+
+    private int findLastPosition(int[] nums, int target) {
+        int left = 0;
+        int right = nums.length - 1;
+        while (left < right) {
+            // 注意这里是 right - left + 1
+            int mid = left + (right - left + 1) / 2;
+            if (nums[mid] > target) {
+                // 下一轮搜索区间是 [left, mid - 1]
+                right = mid - 1;
+            } else if (nums[mid] == target){
+                // 下一轮搜索区间是 [mid, right]
+                left = mid;
+            } else {
+                // nums[mid] < target，下一轮搜索区间是 [mid + 1, right]
+                left = mid + 1;
+            }
+        }
+        return left;
+    }
+
+
+    /**
+     * 方法2
+      * @param nums
+     * @param K
+     * @return
+     */
+    public int GetNumberOfK2(int[] nums, int K) {
+        if(nums.length <= 0 || nums == null) {
+            return 0;
+        }
         int first = binarySearch(nums, K);
         int last = binarySearch(nums, K+1);
         return (first == nums.length || nums[first] != K)? 0 : last - first;
@@ -1462,8 +1561,10 @@ public class All {
     /**
      * 方法2
      */
-    public int getNumberOfK2(int [] array , int k) {
-        if(array == null && array.length == 0) return 0;
+    public int getNumberOfK3(int [] array , int k) {
+        if(array == null && array.length == 0) {
+            return 0;
+        }
 
         return btSearch(array, k + 0.5) - btSearch(array, k - 0.5);
     }
@@ -1781,7 +1882,32 @@ public class All {
 // 现在,要求你使用这幅牌模拟上面的过程,然后告诉我们LL的运气如何， 如果牌能组成顺子就输出true，
 // 否则就输出false。为了方便起见,你可以认为大小王是0。
 // 思路：用数组记录五张扑克牌，将数组调整为有序的，若0出现的次数>=顺子的差值，即为顺子。
-     
+// 视频 https://www.bilibili.com/video/BV1h7411776x?from=search&seid=15979322832952047082
+
+    public boolean isContinuous(int [] numbers) {
+        if(numbers.length!=5){
+            return false;
+        }
+        Arrays.sort(numbers);
+        int zero = 0;
+        // 因为只有5张牌，4个0，所以最后一个肯定不是0
+        for(int i =0;i<numbers.length-1;i++){
+            if(numbers[i] == 0){
+                zero++;
+                continue;
+            }
+            if(numbers[i] == numbers[i+1]){
+                return false;
+            }
+        }
+        if(numbers[numbers.length-1] - numbers[zero]<5){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+
     public boolean isContinuous(int [] numbers) {
         if (numbers == null || numbers.length == 0)
             return false;
@@ -1832,39 +1958,46 @@ public class All {
         return false;
     }
 
-//45.圆圈中最后剩下的数字（约瑟夫环） 每年六一儿童节,牛客都会准备一些小礼物去看望孤儿院的小朋友,今年亦是如此。
-// HF作为牛客的资深元老,自然也准备了一些小游戏。其中,有个游戏是这样的:首先,让小朋友们围成一个大圈。
-// 然后,他随机指定一个数m,让编号为0的小朋友开始报数。
-// 每次喊到m-1的那个小朋友要出列唱首歌,然后可以在礼品箱中任意的挑选礼物,
-// 并且不再回到圈中,从他的下一个小朋友开始,继续0...m-1报数....这样下去....直到剩下最后一个小朋友,
-// 可以不用表演,并且拿到牛客名贵的“名侦探柯南”典藏版(名额有限哦!!^_^)。请你试着想下,
-// 哪个小朋友会得到这份礼品呢？(注：小朋友的编号是从0到n-1)
-//    思路：利用循环链表实现
+//45.圆圈中最后剩下的数字（约瑟夫环）
+// 给定一个由[0...n-1]构成的数组，第一次从0开始数m个数，然后删除，
+// 以后每次都从删除的数下一个位置开始数m个数，然后删除，直到剩余一个数字，找出那个数字。
+//比如：arr = [0 1 2 3 4]， m = 3
+//第一次：删除2 ，变成 arr = [0 1 3 4]
+//第二次，删除0，变成 arr = [1 3 4]
+//第三次，删除4，变成 arr = [1 3]
+//第四次，删除1，变成 arr = [3]
+//https://blog.nowcoder.net/n/1578f938852b4c7c87aa3720a940647d?f=comment
 
-        public int LastRemaining_Solution ( int n, int m){
-            LinkedList<Integer> list = new LinkedList<Integer>();
-            int bt = 0;
-            for (int i = 0; i < n; i++) {
-                list.add(i);
-            }
-            while (list.size() > 1) {
-                bt = (bt + m - 1) % list.size();
-                list.remove(bt);
-            }
-            return list.size() == 1 ? list.get(0) : -1;
-        }
 
-        /**
-         * 方法2
-         */
-        public int LastRemaining_Solution ( int n, int m){
-            if (n == 0 || m == 0) return -1;
-            int s = 0;
-            for (int i = 2; i <= n; i++) {
-                s = (s + m) % i;
-            }
-            return s;
+    public int LastRemaining_Solution ( int n, int m){
+        LinkedList<Integer> list = new LinkedList<Integer>();
+        int bt = 0;
+        for (int i = 0; i < n; i++) {
+            list.add(i);
         }
+        while (list.size() > 1) {
+            bt = (bt + m - 1) % list.size();
+            list.remove(bt);
+        }
+        return list.size() == 1 ? list.get(0) : -1;
+    }
+
+    /**
+     * 方法2
+     * f[1] = 0
+     * f[2] = (f{1] + m) % 2
+     * f[3] = (f[2] + m) % 3
+     * ...
+     * f[n] = (f[n-1] + m) % n
+     */
+    public int LastRemaining_Solution ( int n, int m){
+        if (n == 0 || m == 0) return -1;
+        int s = 0;
+        for (int i = 2; i <= n; i++) {
+            s = (s + m) % i;
+        }
+        return s;
+    }
 
 
 //46.求1+2+3+...+n，要求不能使用乘除法、for、while、if、else、switch、case等关键字及条件判断语句（A?
@@ -1884,36 +2017,48 @@ public class All {
 
 
 //47.写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。
-//    思路：利用位运算
+// 思路：利用位运算 使用位运算实现二位加法：
+// 执行加法 x ^ y
+// 进位操作 ( x & y ) << 1
+// 例子：
+// 正确的加法计算：11+01 = 100
+// 使用位运算实现二位加法：
+// 按位加法： res1 = 11 ^ 01 = 10
+// 与运算进位： res2 = (11 & 01) << 1 = ( 01 ) << 1 = 010
+// res1 ^ res2 = 10 ^ 010 = 00
+// (10 & 10) << 1 = 100
 
-        public int Add ( int num1, int num2){
-            while (num2 != 0) {
-                // 计算个位
-                int temp = num1 ^ num2;
-                // 计算进位（1+1）
-                num2 = (num1 & num2) << 1;
-                num1 = temp;
-            }
-            return num1;
+// https://blog.nowcoder.net/n/07f2bd03162d40ddaebefd666e0d71b2?f=comment
+
+    public int Add ( int num1, int num2){
+        while (num2 != 0) {
+            // 执行加法
+            int temp = num1 ^ num2;
+            // 计算进位（1+1）
+            num2 = (num1 & num2) << 1;
+            num1 = temp;
         }
+        return num1;
+    }
 
-    // 方法2
-    public int Add2 ( int num1, int num2){
+    public int Add(int num1,int num2) {
         int result = 0;
         int carry = 0;
-        do {
+        do{
             result = num1 ^ num2;       //不带进位的加法
             carry = (num1 & num2) << 1; //进位
             num1 = result;
             num2 = carry;
-        } while (carry != 0); // 进位不为0则继续执行加法处理进位
+        }while(carry != 0); // 进位不为0则继续执行加法处理进位
         return result;
     }
 
 
 //49.将一个字符串转换成一个整数，要求不能使用字符串转换整数的库函数。 数值为0或者字符串不是一个合法
 //            的数值则返回0
-//    思路：若为负数，则输出负数，字符0对应48,9对应57，不在范围内则返回false。
+//    思路：若为负数，则输出负数，字符0对应48,9对应57，不在范围内则返回false
+//    “A”的ASCII码值为65；“a”的ASCII码值为97；大Z的ASCII码是90， 小z的ASCII码是122， “0”的ASCII码值为 48。 “9”的ascii是57
+//    ASCII码的大小规则为0~9<A~Z<a~z。
      
     public int StrToInt(String str) {
         if (str == null || str.length() == 0)
@@ -1922,7 +2067,7 @@ public class All {
         int number = 0;
         char[] chars = str.toCharArray();
         if (chars[0] == '-')
-            mark = 1;
+            mark = 1; // 表示正负
         for (int i = mark; i < chars.length; i++) {
             if (chars[i] == '+') {
                 continue;
@@ -1968,132 +2113,58 @@ public class All {
 //    共祖先。否则如果根节点的值小于两个节点的值，则递归求根节点的右子树，如果大于两个节点的值则递归求
 //    根的左子树。如果根节点正好是其中的一个节点，那么说明这两个节点在一条路径上，所以最低公共祖先则是
 //    根节点的父节点，时间复杂度是O(logn)，空间复杂度是O(1)
-     
-    public  TreeNode getLowestCommonAncestor(TreeNode rootParent,TreeNode root,
-                                                   TreeNode node1,TreeNode node2){
-        if(root == null || node1 == null || node2 == null){
-            return null;
-        }
-        if((root.val - node1.val)*(root.val - node2.val) < 0){
-            return root;
-        }else if((root.val - node1.val)*(root.val - node2.val) > 0){
-            TreeNode newRoot = ((root.val > node1.val) && (root.val > node2.val))
-                    ? root.left : root.right;
-            return getLowestCommonAncestor(root,newRoot, node1, node2);
-        }else{
-            return rootParent;
-        }
-    }
 
-
-//（2）若树是普通树，但有指向父节点的指针
-//    思路：两个节点如果在两条路径上，类似于求两个链表的第一个公共节点。由于每个节点的深度最多为logn，
-//    所以时间复杂度为O(logn),空间复杂度O(1)
-
-    class BinaryTreeNode {
-        BinaryTreeNode parentNode;
-    }
-    public  BinaryTreeNode getLowestCommonAncestor1(BinaryTreeNode root,BinaryTreeNode node1,
-                                                          BinaryTreeNode node2){
-        if(root == null || node1 == null || node2 == null){
-            return null;
-        }
-        int depth1 = findTheDepthOfTheNode(root, node1, node2);
-        if(depth1 == -1){
-            return node2.parentNode;
-        }
-        int depth2 = findTheDepthOfTheNode(root, node2, node1);
-        if(depth2 == -1){
-            return node1.parentNode;
-        }
-        //p指向较深的节点q指向较浅的节点
-        BinaryTreeNode p = depth1 > depth2 ? node1 : node2;
-        BinaryTreeNode q = depth1 > depth2 ? node2 : node1;
-        int depth = Math.abs(depth1 - depth2);
-        while(depth > 0){
-            p = p.parentNode;
-            depth --;
-        }
-        while(p != q){
-            p = p.parentNode;
-            q = q.parentNode;
-        }
-        return p;
-    }
-    //求node1的深度，如果node1和node2在一条路径上，则返回-1，否则返回node1的深度
-    public static int findTheDepthOfTheNode(BinaryTreeNode root,BinaryTreeNode node1,
-                                            BinaryTreeNode node2){
-        int depth = 0;
-        while(node1.parentNode != null){
-            node1 = node1.parentNode;
-            depth ++;
-            if(node1 == node2){
-                return -1;
+    public algorithm.TreeNode lowestCommonAncestor(algorithm.TreeNode root, algorithm.TreeNode p, algorithm.TreeNode q) {
+        algorithm.TreeNode ancestor = root;
+        while (true) {
+            if (p.val < ancestor.val && q.val < ancestor.val) {
+                ancestor = ancestor.left;
+            } else if (p.val > ancestor.val && q.val > ancestor.val) {
+                ancestor = ancestor.right;
+            } else {
+                break;
             }
         }
-        return depth;
+        return ancestor;
     }
 
-//（3）若树是普通树，并没有指向父节点的指针
-//    思路：用栈来实现类似于指向父节点指针的功能，获取node节点的路径时间复杂度为O(n),所以总的时间复杂
-//    度是O(n),空间复杂度是O(logn)
-     
-//    public static BinaryTreeNode getLowestCommonAncestor2(BinaryTreeNode root, BinaryTreeNode node1,
-//                                                          BinaryTreeNode node2){
-//        if(root == null || node1 == null || node2 == null){
-//            return null;
-//        }
-//        Stack<BinaryTreeNode> path1 = new Stack<BinaryTreeNode>();
-//        boolean flag1 = getThePathOfTheNode(root, node1,path1);
-//        if(!flag1){//树上没有node1节点
-//            return null;
-//        }
-//        Stack<BinaryTreeNode> path2 = new Stack<BinaryTreeNode>();
-//        boolean flag2 = getThePathOfTheNode(root, node2,path2);
-//        if(!flag2){//树上没有node2节点
-//            return null;
-//        }
-//        if(path1.size() > path2.size()){ //让两个路径等长
-//            while(path1.size() != path2.size()){
-//                path1.pop();
-//            }
-//        }else{
-//            while(path1.size() != path2.size()){
-//                path2.pop();
-//            }
-//        }
-//        if(path1 == path2){//当两个节点在一条路径上时
-//            path1.pop();
-//            return path1.pop();
-//        }else{
-//            BinaryTreeNode p = path1.pop();
-//            BinaryTreeNode q = path2.pop();
-//            while(q != p){
-//                p = path1.pop();
-//                q = path2.pop();
-//            }
-//            return p;
-//        }
-//    }
-//    //获得根节点到node节点的路径
-//    public static boolean getThePathOfTheNode(BinaryTreeNode root,BinaryTreeNode node,
-//                                              Stack<BinaryTreeNode> path){
-//        path.push(root);
-//        if(root == node){
-//            return true;
-//        }
-//        boolean found = false;
-//        if(root.leftNode != null){
-//            found = getThePathOfTheNode(root.leftNode, node, path);
-//        }
-//        if(!found && root.rightNode != null){
-//            found = getThePathOfTheNode(root.rightNode, node, path);
-//        }
-//        if(!found){
-//            path.pop();
-//        }
-//        return found;
-//    }
+
+    /**
+     * 普通二叉树的最近公共祖先
+     * @param root
+     * @param p
+     * @param q
+     * @return
+     */
+    public algorithm.TreeNode lowestCommonAncestor2(algorithm.TreeNode root, algorithm.TreeNode p, algorithm.TreeNode q) {
+        // 如果树为空，直接返回null
+        if (root == null) {
+            return null;
+        }
+        // 如果 p和q中有等于 root的，那么它们的最近公共祖先即为root（一个节点也可以是它自己的祖先）
+        if (root == p || root == q) {
+            return root;
+        }
+        // 递归遍历左子树，只要在左子树中找到了p或q，则先找到谁就返回谁
+        algorithm.TreeNode left = lowestCommonAncestor(root.left, p, q);
+        // 递归遍历右子树，只要在右子树中找到了p或q，则先找到谁就返回谁
+        algorithm.TreeNode right = lowestCommonAncestor(root.right, p, q);
+
+        // 如果在左子树中 p和 q都找不到，则 p和 q一定都在右子树中，右子树中先遍历到的那个就是最近公共祖先（一个节点也可以是它自己的祖先）
+        if (left == null) {
+            return right;
+        }
+        else if (right == null) {
+            // 否则，如果 left不为空，在左子树中有找到节点（p或q），这时候要再判断一下右子树中的情况，如果在右子树中，p和q都找不到，则 p和q一定都在左子树中，左子树中先遍历到的那个就是最近公共祖先（一个节点也可以是它自己的祖先）
+            return left;
+        }
+        else {
+            //否则，当 left和 right均不为空时，说明 p、q节点分别在 root异侧, 最近公共祖先即为 root
+            return root;
+        }
+    }
+
+
 
 
 //51.在一个长度为n的数组里的所有数字都在0到n-1的范围内，找出数组中任意一个重复的数字
@@ -2116,11 +2187,13 @@ public class All {
         return false;
     }
 
-//52.给定一个数组A[0,1,...,n-1],请构建一个数组B[0,1,...,n-1],其中B中的元素B[i]=A[0]A[1]...A[i-1]A[i+1]...A[n-1]。
-//    其中A[i] = 1。不能使用除法，
-//    思路：使用矩阵法求解，将矩阵分为上三角矩阵和下三角矩阵，分别求乘积
-     
-    public int[] multiply(int[] A) {
+// 52.给定一个数组A[0,1,...,n-1],请构建一个数组B[0,1,...,n-1],其中B中的元素B[i]=A[0]A[1]...A[i-1]A[i+1]...A[n-1]。
+// 输入: [1,2,3,4,5]
+// 输出: [120,60,40,30,24]
+// 其中A[i] = 1。不能使用除法， https://www.nowcoder.com/questionTerminal/94a4d381a68b47b7a8bed86f2975db46
+
+
+    public int[] multiply1(int[] A) {
         int length = A.length;
         int[] B = new int[length];
         if(length != 0 ){
@@ -2130,7 +2203,7 @@ public class All {
                 B[i] = B[i-1] * A[i-1];
             }
             int temp = 1;
-            //计算上三角连乘
+            //计算上三角
             for(int j = length-2; j >= 0; j--){
                 temp *= A[j+1];
                 B[j] *= temp;
@@ -2365,7 +2438,67 @@ public class All {
 //    打印，第三行按照从左到右的顺序打印，依此类推。
 //    思路：利用两个栈的辅助空间分别存储奇数偶数层的节点，然后打印输出。或使用链表的辅助空间来实现，利
 //    用链表的反向迭实现逆序输出。
-     
+
+    /**
+     * https://leetcode-cn.com/problems/binary-tree-zigzag-level-order-traversal/solution/jiao-ti-shi-yong-zhan-jian-dan-shi-xian-ju-chi-xin/
+     * @param root
+     * @return
+     */
+    public List<List<Integer>> zigzagLevelOrder(TreeNode root) {
+        List<List<Integer>> list = new ArrayList<>();
+        if (root == null) {
+            return list;
+        }
+        //栈1来存储右节点到左节点的顺序
+        Stack<TreeNode> stack1 = new Stack<>();
+        //栈2来存储左节点到右节点的顺序
+        Stack<TreeNode> stack2 = new Stack<>();
+
+        //根节点入栈
+        stack1.push(root);
+
+        //每次循环中，都是一个栈为空，一个栈不为空，结束的条件两个都为空
+        while (!stack1.isEmpty() || !stack2.isEmpty()) {
+            List<Integer> subList = new ArrayList<>(); // 存储这一个层的数据
+            TreeNode cur = null;
+
+            if (!stack1.isEmpty()) { //栈1不为空，则栈2此时为空，需要用栈2来存储从下一层从左到右的顺序
+                while (!stack1.isEmpty()) {	//遍历栈1中所有元素，即当前层的所有元素
+                    cur = stack1.pop();
+                    subList.add(cur.val);	//存储当前层所有元素
+
+                    if (cur.left != null) {	//左节点不为空加入下一层
+                        stack2.push(cur.left);
+                    }
+                    if (cur.right != null) {	//右节点不为空加入下一层
+                        stack2.push(cur.right);
+                    }
+                }
+                list.add(subList);
+            }else {//栈2不为空，则栈1此时为空，需要用栈1来存储从下一层从右到左的顺序
+                while (!stack2.isEmpty()) {
+                    cur = stack2.pop();
+                    subList.add(cur.val);
+
+                    if (cur.right != null) {//右节点不为空加入下一层
+                        stack1.push(cur.right);
+                    }
+                    if (cur.left != null) { //左节点不为空加入下一层
+                        stack1.push(cur.left);
+                    }
+                }
+                list.add(subList);
+            }
+        }
+        return list;
+    }
+
+
+    /**
+     * 方法2
+     * @param pRoot
+     * @return
+     */
     public ArrayList<ArrayList<Integer>> Print1(TreeNode pRoot) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
         if (pRoot == null)
@@ -2408,7 +2541,7 @@ public class All {
         return res;
     }
 
-//61.从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。
+//61.从上到下按层打印二叉树，同一层结点从左至右输出。每一层输出一行。输入{8,6,10,5,7,9,11}，输出 {8,6,10,5,7,9,11}
 //    思路：利用辅助空间链表或队列来存储节点，每层输出。
      
     public ArrayList<ArrayList<Integer>> Print2(TreeNode pRoot) {
@@ -2437,105 +2570,95 @@ public class All {
         } return res;
     }
 
-//62.请实现两个函数，分别用来序列化和反序列化二叉树，二叉树的序列化是指：
+
+// 62.请实现两个函数，分别用来序列化和反序列化二叉树，二叉树的序列化是指：
 // 把一棵二叉树按照某种遍历方式的结果以某种格式保存为字符串，从而使得内存中建立起来的二叉树可以持久保存。
 // 序列化可以基于先序、中序、后序、层序的二叉树遍历方式来进行修改，序列化的结果是一个字符串，
 // 序列化时通过 某种符号表示空节点（#），以 ！ 表示一个结点值的结束（value!）。
-//二叉树的反序列化是指：根据某种遍历顺序得到的序列化字符串结果str，重构二叉树。
-//例如，我们可以把一个只有根节点为1的二叉树序列化为"1,"，然后通过自己的函数来解析回这个二叉树
-//    思路：序列化：前序遍历二叉树存入字符串中；反序列化：根据前序遍历重建二叉树。
-     
-    public String Serialize(TreeNode root) {
-        StringBuffer sb = new StringBuffer();
-        if (root == null){
-            sb.append("#,");
-            return sb.toString();
-        }
-        sb.append(root.val + ",");
-        sb.append(Serialize(root.left));
-        sb.append(Serialize(root.right));
-        return sb.toString();
+// 二叉树的反序列化是指：根据某种遍历顺序得到的序列化字符串结果str，重构二叉树。
+// 例如，我们可以把一个只有根节点为1的二叉树序列化为"1,"，然后通过自己的函数来解析回这个二叉树
+//  思路：序列化：前序遍历二叉树存入字符串中；反序列化：根据前序遍历重建二叉树。
+// https://leetcode-cn.com/problems/serialize-and-deserialize-binary-tree/solution/er-cha-shu-de-xu-lie-hua-yu-fan-xu-lie-hua-by-le-2/
+
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        if (root == null) return "X,";
+        int rootVal = root.val;
+        String leftSerialize = serialize(root.left); //左子树的序列化字符串
+        String rightSerialize = serialize(root.right); //右子树的序列化字符串
+        return rootVal + "," + leftSerialize + rightSerialize;
     }
-    public int index = -1;
-    public TreeNode Deserialize(String str) {
-        index++;
-        int len = str.length();
-        String[] strr = str.split(",");
-        TreeNode node = null;
-        if (index >= len)
-            return null;
-        if (!strr[index].equals("#")){
-            node = new TreeNode(Integer.valueOf(strr[index]));
-            node.left = Deserialize(str);
-            node.right = Deserialize(str);
-        }
+
+    // Decodes your encoded data to tree.
+    /**
+     * 构建树的函数 buildTree 接收的 “状态” 是 list 数组，由序列化字符串转成
+     * 按照前序遍历的顺序：先构建根节点，再构建左子树、右子树
+     * 将 list 数组的首项弹出，它是当前子树的 root 节点
+     * 如果它为 'X' ，返回 null
+     * 如果它不为 'X'，则为它创建节点，并递归调用 buildTree 构建左右子树，当前子树构建完毕，向上返回
+     */
+    public TreeNode deserialize(String data) {
+        String[] temp = data.split(",");
+        Deque<String> dp = new LinkedList<>(Arrays.asList(temp));
+        return buildTree(dp);
+    }
+    private TreeNode buildTree(Deque<String> dq){
+        String s = dq.poll(); //返回当前结点
+        if (s.equals("X")) return null;
+        TreeNode node = new TreeNode(Integer.parseInt(s));
+        node.left = buildTree(dq); //构建左子树
+        node.right = buildTree(dq); //构建右子树
         return node;
     }
 
 
-    public String rserialize(TreeNode root, String str) {
-        if (root == null) {
-            str += "None,";
-        } else {
-            str += str.valueOf(root.val) + ",";
-            str = rserialize(root.left, str);
-            str = rserialize(root.right, str);
-        }
-        return str;
-    }
+//63.给定一棵二叉搜索树，请找出其中的第k小的结点。
+//    思路：二叉搜索树按照中序遍历的顺序打印出来正好就是排序好的顺序，第k个结点就是第K大的节点，分别递
+//    归查找左右子树的第K个节点，或使用非递归借用栈的方式查找，当count=k时返回根节点。
 
-    public String serialize(TreeNode root) {
-        return rserialize(root, "");
+
+    /**
+     * 非递归
+     */
+    TreeNode KthNode(TreeNode root, int k) {
+        if(root == null || k == 0) return null;
+        int count = 0;
+        Stack<TreeNode> stack = new Stack<>();
+        while (root != null || ! stack.isEmpty()) {
+            while (root != null) {
+                stack.push(root);
+                root = root.left;
+            }
+            root = stack.pop();
+            count ++;
+            if(count == k) return root;
+            root = root.right;
+        }
+        return null;
     }
 
     /**
      * 方法2
-     * @param l
-     * @return
      */
-    public TreeNode rdeserialize(List<String> l) {
-        if (l.get(0).equals("None")) {
-            l.remove(0);
-            return null;
+    int index=0;
+    TreeNode KthNode2(TreeNode pRoot, int k){
+        if(pRoot!=null){
+            TreeNode node = KthNode(pRoot.left, k);
+            if(node!=null){
+                return node;
+            }
+            index++;
+            if(k==index){
+                return pRoot;
+            }
+            node = KthNode(pRoot.right, k);
+            if(node!=null){
+                return node;
+            }
         }
-
-        TreeNode root = new TreeNode(Integer.valueOf(l.get(0)));
-        l.remove(0);
-        root.left = rdeserialize(l);
-        root.right = rdeserialize(l);
-
-        return root;
-    }
-
-    public TreeNode deserialize(String data) {
-        String[] data_array = data.split(",");
-        List<String> data_list = new LinkedList<String>(Arrays.asList(data_array));
-        return rdeserialize(data_list);
-    }
-
-
-
-//63.给定一颗二叉搜索树，请找出其中的第k大的结点
-//    思路：二叉搜索树按照中序遍历的顺序打印出来正好就是排序好的顺序，第k个结点就是第K大的节点，分别递
-//    归查找左右子树的第K个节点，或使用非递归借用栈的方式查找，当count=k时返回根节点。
-     
-    int count2 = 0;
-    public TreeNode KthNode(TreeNode pRoot, int k) {
-        if (pRoot == null || k < 1)
-            return null;
-        count2++;
-        if (count2 == k) {
-            return pRoot;
-        }
-        TreeNode leftNode = KthNode(pRoot.left,k);
-        if (leftNode != null)
-            return leftNode;
-        TreeNode rightNode = KthNode(pRoot.right,k);
-        if (rightNode != null)
-            return rightNode;
         return null;
     }
-
 
 //64.如何得到一个数据流中的中位数？如果从数据流中读出奇数个数值，那么中位数就是所有数值排序之后位
 //    于中间的数值。如果从数据流中读出偶数个数值，那么中位数就是所有数值排序之后中间两个数的平均值。
@@ -2624,35 +2747,38 @@ public class All {
         return arr;
     }
 
-    // 方法2
-    public ArrayList<Integer> maxInWindows2(int [] num, int size)
-    {
-        //思路时=是，一个双向链表存储小标，当当前元素比下标小时，入队列，大时，遍历队列，比该元素小时就舍弃，然后入队列
-        //begin记录滑动窗口左边
-        ArrayList res= new ArrayList<>();
-        if(num==null||size==0||num.length<size){
-            return res;
-        }
-        int begin=0;
-        ArrayDeque<Integer> queue = new ArrayDeque<>();
-        for(int i=0;i<num.length;i++){
-            begin=i-size+1;//代表滑动窗口的起点
-            if(queue.isEmpty()){
-                queue.add(i);
-            }else if(begin>queue.peekFirst()){
-                queue.pollFirst();
-            }
 
-            while(!queue.isEmpty()&&num[i]>= num[queue.peekLast()]){
+    /**
+     * 方法2 这个双向队列是保存当前最大值在数组中的位置，区别上一个方法
+     */
+    public int[] maxSlidingWindow2(int[] nums, int k) {
+
+
+        if(nums == null || nums.length < 2) {
+            return nums;
+        }
+        // 双向队列 保存当前窗口最大值的数组位置 保证队列中数组位置的数值按从大到小排序
+        LinkedList<Integer> queue = new LinkedList();
+        // 结果数组
+        int[] result = new int[nums.length-k+1];
+        // 遍历nums数组
+        for (int i = 0;i < nums.length;i++){
+            // 保证从大到小 如果前面数小则需要依次弹出，直至满足要求
+            while (!queue.isEmpty() && nums[queue.peekLast()] <= nums[i]){
                 queue.pollLast();
             }
-
-            queue.add(i);
-            if(begin>=0){
-                res.add(num[queue.peekFirst()]);
+            // 添加当前值对应的数组下标
+            queue.addLast(i);
+            // 判断当前队列中队首的值是否有效
+            if (queue.peek() <= i-k){
+                queue.poll();
+            }
+            // 当窗口长度为k时 保存当前窗口中最大值
+            if (i+1 >= k){
+                result[i+1-k] = nums[queue.peek()];
             }
         }
-        return res;
+        return result;
     }
 
 
@@ -2695,7 +2821,10 @@ public class All {
 //    例如，当k为18时，机器人能够进入方格（35,37），因为3+5+3+7 = 18。但是，它不能进入方格（35,38），
 //    因为3+5+3+8 = 19。请问该机器人能够达到多少个格子？
 //    思路：利用递归实现，每次只能走上下左右四个点，进行判断点的位置是否越界，点数之和是否大于K，是否
-//    已经走过了。
+//    已经走过了。  时间复杂度 O(MN)O(MN) ： 最差情况下，机器人遍历矩阵所有单元格，此时时间复杂度为 O(MN)O(MN) 。
+//    空间复杂度 O(MN)O(MN) ： 最差情况下，Set visited 内存储矩阵所有单元格的索引，使用 O(MN)O(MN) 的额
+
+
      
     public int movingCount(int threshold, int rows, int cols) {
         int flag[][] = new int[rows][cols]; //记录是否已经走过
@@ -2760,29 +2889,68 @@ public class All {
      * 剪绳子：给你一根长度为n的绳子，请把绳子剪成整数长的m段（m、n都是整数，n>1并且m>1，m<=n），
      * 每段绳子的长度记为k[1],...,k[m]。请问k[1]x...xk[m]可能的最大乘积是多少？例如，当绳子的长度是8时，
      * 我们把它剪成长度分别为2、3、3的三段，此时得到的最大乘积是18。
+     * https://leetcode-cn.com/problems/jian-sheng-zi-lcof/solution/shu-xue-zhi-shi-he-dong-tai-gui-hua-liang-chong-fa/
      */
-    private static int cutRope(int target) {
-        int a = 0;
-        int c = 0;
-        int maxValue = 2;
-        if (target == 2) {
-            return 1;
-        }
-        if (target == 3) {
-            return 2;
-        }
-        if (target % 3 == 0) {
-            maxValue = (int)Math.pow(3, target / 3);
-        } else{
-            a = target - 2;
-            c = a % 3;
 
-            maxValue = maxValue * (int)Math.pow(3, a / 3);
-            if (0 != c) {
-                maxValue = maxValue * c;
+
+    public int cuttingRope(int n) {
+        if (n == 2 || n == 3)
+            return n - 1;
+        else if (n % 3 == 0) {
+            //如果n是3的倍数，绳子全部剪为3
+            return (int) Math.pow(3, n / 3);
+        } else if (n % 3 == 1) {
+            //如果n对3求余等于1，我们剪出一个长度为4的，其他长度都是3
+            return 4 * (int) Math.pow(3, (n - 4) / 3);
+        } else {
+            //如果n对3求余等于2，我们剪出一个长度为2的，其他长度都是3
+            return 2 * (int) Math.pow(3, n / 3);
+        }
+    }
+
+    /**
+     * 方法2 动态规划
+     */
+    public int cuttingRope2(int n) {
+        int[] dp = new int[n + 1];
+        dp[1] = 1;
+        for (int i = 2; i <= n; i++) {
+            for (int j = 1; j < i; j++) {
+                dp[i] = Math.max(dp[i], (Math.max(j, dp[j])) * (Math.max(i - j, dp[i - j])));
             }
         }
-        return maxValue;
+        return dp[n];
+    }
+
+
+    /**
+     * 整数的拆分，（和减绳子一样，用在剪绳子也能过）给定一个正整数n， 将其拆分成至少两个正整数的和，
+     * 并使得这些整数的乘积最大化，返回可以获得的最大乘积
+     * 输入 2 输出1 【因为 2 = 1+1】， 输入10，返回36  【因为10 = 3+3+4】
+     */
+
+    public int integerBreak(int n) {
+        int [] dp = new int [n+1];
+        if (n<2) {
+            return 1;
+        }
+        if(n==2) {
+            return 1;
+        }
+        if (n == 3) {
+            return 2;
+        }
+        // 大于等于4的值， 2 3 不拆分，因为拆分后乘积变小
+        dp[1] = 1;
+        dp[2] = 2;
+        dp[3] = 3;
+        for (int i = 4 ; i <= n ; i ++) {
+            for (int j = 1; j <= i/2; j ++) {
+                dp[i] = Math.max(dp[i], dp[j]*dp[i-j]);
+            }
+        }
+        return dp[n];
+
     }
 
 

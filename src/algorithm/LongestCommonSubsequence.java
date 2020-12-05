@@ -3,7 +3,17 @@ package algorithm;
 /**
  * @author yangxc27652
  * @date 2020/11/29
- * @description 动态规划
+ * @description  1143最长公共子序列，
+ * 输入：text1 = "abcde", text2 = "ace"
+ * 输出：3
+ * 解释：最长公共子序列是 "ace"，它的长度为 3。
+ * 输入：text1 = "abc", text2 = "abc"
+ * 输出：3
+ * 解释：最长公共子序列是 "abc"，它的长度为 3。
+ * 输入：text1 = "abc", text2 = "def"
+ * 输出：0
+ * 解释：两个字符串没有公共子序列，返回 0。
+ *
  * https://leetcode-cn.com/problems/longest-common-subsequence/solution/dong-tai-gui-hua-tu-wen-jie-xi-by-yijiaoqian/ */
 
 public class LongestCommonSubsequence {
