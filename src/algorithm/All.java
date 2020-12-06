@@ -44,9 +44,8 @@ public class All {
      *  从后往前，先计算需要多少空间，然后从后往前移动，则每个字符只为移动一次，这样效率更高一点。
      */
 
-
-
     public String replaceSpace(StringBuffer str) {
+
         int spacenum = 0;//spacenum为计算空格数
         for (int i=0;i<str.length();i++){
             if (str.charAt(i)==' ') {
@@ -56,18 +55,25 @@ public class All {
         int indexold = str.length()-1; //indexold为为替换前的str下标
         int newlength = str.length() + spacenum*2;//计算空格转换成%20之后的str长度
         int indexnew = newlength-1;//indexold为为把空格替换为%20后的str下标
+        // 注意：stringBuilder是可以设置长度的来扩容的
+        // 这里有个坑，indexold一定要在setLength之前
         str.setLength(newlength);//使str的长度扩大到转换成%20之后的长度,防止下标越界
-        for(;indexold>=0 && indexold<newlength;--indexold){
-            if(str.charAt(indexold) == ' '){  //
+        while (indexold>=0)
+        {
+            if (str.charAt(indexold) == ' '){  //
                 str.setCharAt(indexnew--, '0');
                 str.setCharAt(indexnew--, '2');
                 str.setCharAt(indexnew--, '%');
-            }else{
+            }
+            else {
                 str.setCharAt(indexnew--, str.charAt(indexold));
             }
+            --indexold;
         }
         return str.toString();
+
     }
+
 
     /**
      * 方法二
@@ -77,10 +83,10 @@ public class All {
     public String replaceSpace2(StringBuffer str) {
         String str1=str.toString();
         StringBuffer sb = new StringBuffer();
-        for(int i=0;i<str1.length();i++){
+        for (int i=0;i<str1.length();i++){
             if (str1.charAt(i)==' '){
                 sb.append("%20");
-            }else{
+            }else {
                 sb.append(str1.charAt(i));
             }
 
@@ -136,6 +142,7 @@ public class All {
         for (int i = 0; i < pre.length; i++) {
             if (pre[0] == in[i]) {
                 root.left = reConstructBinaryTree(
+                        // Arrays.copyOfRange是左闭右开的
                         Arrays.copyOfRange(pre,1,i+1),Arrays.copyOfRange(in,0,i));
                 root.right = reConstructBinaryTree(
                         Arrays.copyOfRange(pre,i+1,pre.length),Arrays.copyOfRange(in,i+1,in.length));
@@ -190,6 +197,7 @@ public class All {
     public int minNumberInRotateArray(int [] array) {
         int low = 0 ; int high = array.length - 1;
         while(low < high){
+            // 注意mid赋值写在循环内部
             int mid = low + (high - low) / 2;
             if(array[mid] > array[high]){
                 low = mid + 1;
