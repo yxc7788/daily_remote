@@ -196,14 +196,14 @@ public class All {
 
     public int minNumberInRotateArray(int [] array) {
         int low = 0 ; int high = array.length - 1;
-        while(low < high){
+        while (low < high){
             // 注意mid赋值写在循环内部
             int mid = low + (high - low) / 2;
-            if(array[mid] > array[high]){
+            if (array[mid] > array[high]){
                 low = mid + 1;
-            }else if(array[mid] == array[high]){
+            }else if (array[mid] == array[high]){
                 high = high - 1;
-            }else{
+            }else {
                 high = mid;
             }
         }
@@ -216,16 +216,16 @@ public class All {
      */
 
     public int fibonacci(int n) {
-        if(n == 1){
+        if (n == 1){
             return 1;
         }
-        if(n == 2){
+        if (n == 2){
             return 1;
         }
         int temp = 0;
         int pre2 = 1;
         int pre1 = 1;
-        for(int i = 2; i < n; i++){
+        for (int i = 3; i < n; i++){
             temp = pre2 +pre1;
             pre2 = pre1;
             pre1 = temp;
@@ -242,7 +242,7 @@ public class All {
      */
 
     public int JumpFloor(int target) {
-        if(target <= 2){
+        if (target <= 2){
             return target;
         }
         int pre2 = 1, pre1 = 2;
@@ -271,10 +271,22 @@ public class All {
      *     根据f[n] = 2*f[n-1]，和初始条件f[0] = f[1] = 1，可以得出结果是2^（n-1）
      */
 
-    public int JumpFloor3(int target) {
+    public int jumpFloor3(int target) {
         return (int) Math.pow(2,target-1);
     }
 
+    /**
+     * 或者
+     */
+    public int jumpFloor4(int target) {
+        if (target==0)
+            return 0;
+        if (target==1)
+            return 1;
+        if (target==2)
+            return 2;
+        return 2*jumpFloor4(target-1);
+    }
 
     /**
      * 9.5 题目描述
@@ -283,12 +295,12 @@ public class All {
      */
 
     public int rectCover(int target) {
-        if(target <= 2){
+        if (target <= 2){
             return target;
         }
         int pre1 = 1;
         int pre2 = 2;
-        for(int i = 3; i <= target; i++){
+        for (int i = 3; i <= target; i++){
             int cur = pre1 + pre2;
             pre1 = pre2;
             pre2 = cur;
@@ -343,25 +355,28 @@ public class All {
 
     public void printToMaxOfNDigits(int n) {
         int[] array=new int[n];
-        if(n <= 0)
+        if (n <= 0) {
             return;
+        }
         printArray(array, 0);
     }
-    private void printArray(int[] array,int n) {
-        for(int i = 0; i < 10; i++) {
-            if(n != array.length) {
+    private void printArray(int[] array, int n) {
+        for (int i = 0; i < 10; i++) {
+            if (n != array.length) {
                 array[n] = i;
                 printArray(array, n+1);
             } else {
                 boolean isFirstNo0 = false;
-                for(int j = 0; j < array.length; j++) {
-                    if(array[j] != 0) {
+                for (int j = 0; j < array.length; j++) {
+                    if (array[j] != 0) {
                         System.out.print(array[j]);
-                        if(!isFirstNo0)
+                        if (!isFirstNo0) {
                             isFirstNo0 = true;
+                        }
                     } else {
-                        if(isFirstNo0)
+                        if (isFirstNo0) {
                             System.out.print(array[j]);
+                        }
                     }
                 }
                 System.out.println();
@@ -424,7 +439,7 @@ public class All {
 
     /**
      * 方法2
-     * @return 这个也能过，但是牛客有人说错的
+     * @return 类似冒泡排序
      */
     public void reOrderArray2(int [] array) {
 
@@ -445,26 +460,26 @@ public class All {
 //15.输入一个链表，输出该链表中倒数第k个结点。
 //    扩展题：找中间节点，使用两个指针，一个走一步，一个走两步。找到中间节点
 //    思路：定义一快一慢两个指针，快指针走K步，然后慢指针开始走，快指针到尾时，慢指针就找到了倒数第K个
-//    节点。
+//    节点。 快指针要先走k-1步
 
-    public ListNode findKthToTail(ListNode head,int k) {
-        if(head==null){
+    public ListNode FindKthToTail(ListNode head,int k) {
+        ListNode first=head;
+        ListNode second=head;
+        if(head==null||k<=0){
             return null;
         }
-        ListNode p = head;
-        ListNode q = head;
-        //快指针先走k步
         for(int i=0;i<k;i++){
-            if(q==null){ //如果中途快指针走到头了，说明k大于链表长度
+            if(second.next==null){
                 return null;
             }
-            q = q.next;
+            second=second.next;
         }
-        while(p!=null && q!=null){
-            p=p.next;
-            q=q.next;
+        while(second.next!=null){
+            first=first.next;
+            second=second.next;
         }
-        return p;
+        return first;
+
     }
     
 //16.输入一个链表，反转链表后，输出链表的所有元素。
@@ -474,31 +489,15 @@ public class All {
     public ListNode ReverseList(ListNode head) {
         ListNode pre=null;
         ListNode next=null;
-        while(head!=null){
-            next=head.next;
-            head.next=pre;
-            pre=head;
-            head=next;
+        while (head!=null){
+            next = head.next;
+            head.next = pre;
+            pre  = head;
+            head = next;
         }return pre;
     }
 
-    /***
-     * 方法2
-     * @return
-     */
-    public ListNode reverseList2(ListNode head) {
-        ListNode p = new ListNode(0);
-        p.next = null;
-        while(head!=null){
-            ListNode tmp = head.next;
-            head.next = p.next;
-            p.next = head;
-            head = tmp;
 
-        }
-        return p.next;
-
-    }
     
 //17.输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
 //    思路：递归与非递归求解，小数放在前面。
@@ -531,32 +530,32 @@ public class All {
 
         ListNode newListNode=null; //不能放在类中，只能在方法中
         ListNode current=null;
-        if(list1==null){
+        if (list1==null){
             return list2;
         }
-        if(list2==null){
+        if (list2==null){
             return list1;
         }
-        while(list1!=null&&list2!=null){
-            if(list1.val<list2.val){
-                if(newListNode==null){
+        while (list1!=null&&list2!=null){
+            if (list1.val<list2.val){
+                if (newListNode==null){
                     newListNode=current=list1;
-                }else{
+                }else {
                     current.next=list1;
                     current=current.next;
                 }
                 list1=list1.next;
-            }else{
-                if(newListNode==null){
+            } else{
+                if (newListNode==null){
                     newListNode=current=list2;
-                }else{
+                }else {
                     current.next=list2;
                     current=current.next;
                 }
                 list2=list2.next;
             }
         }
-        if(list1==null){
+        if (list1==null){
             current.next=list2;
         }else{
             current.next=list1;
@@ -639,58 +638,104 @@ public class All {
 
     public ArrayList<Integer> printMatrix(int [][] matrix) {
         ArrayList<Integer> list = new ArrayList<>();
-        if(matrix == null || matrix.length == 0 || matrix[0].length == 0){
+        if (matrix == null || matrix.length == 0 || matrix[0].length == 0){
+            return list;
+        }
+        // 定义边界
+        int up = 0;
+        int down = matrix.length-1;
+        int left = 0;
+        int right = matrix[0].length-1;
+        while (true){
+            // 最上面一行
+            for (int col=left;col<=right;col++){
+                list.add(matrix[up][col]);
+            }
+            // 向下逼近
+            up++;
+            // 判断是否越界
+            if (up > down){
+                break;
+            }
+            // 最右边一行
+            for (int row=up;row<=down;row++){
+                list.add(matrix[row][right]);
+            }
+            // 向左逼近
+            right--;
+            // 判断是否越界
+            if (left > right){
+                break;
+            }
+            // 最下面一行
+            for (int col=right;col>=left;col--){
+                list.add(matrix[down][col]);
+            }
+            // 向上逼近
+            down--;
+            // 判断是否越界
+            if (up > down){
+                break;
+            }
+            // 最左边一行
+            for (int row=down;row>=up;row--){
+                list.add(matrix[row][left]);
+            }
+            // 向右逼近
+            left++;
+            // 判断是否越界
+            if (left > right){
+                break;
+            }
+        }
+        return list;
+    }
+
+    /**
+     * 第二种写法
+     */
+    public ArrayList<Integer> printMatrix2(int [][] matrix) {
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        if (matrix ==null || matrix.length == 0 || matrix[0].length == 0) {
             return list;
         }
         int up = 0;
         int down = matrix.length-1;
         int left = 0;
         int right = matrix[0].length-1;
-        while(true){
-            // 最上面一行
-            for(int col=left;col<=right;col++){
+
+        while (true) {
+            for (int col = left; col <= right; col++) {
                 list.add(matrix[up][col]);
             }
-            // 向下逼近
-            up++;
-            // 判断是否越界
-            if(up > down){
-                break;
+            up ++;
+            if (up > down) {
+                return list;
             }
-            // 最右边一行
-            for(int row=up;row<=down;row++){
+            for (int row = up; row <= down; row++) {
                 list.add(matrix[row][right]);
             }
-            // 向左逼近
-            right--;
-            // 判断是否越界
-            if(left > right){
-                break;
+            right --;
+            if (right < left) {
+                return list;
             }
-            // 最下面一行
-            for(int col=right;col>=left;col--){
+            for (int col = right; col>=left; col--) {
                 list.add(matrix[down][col]);
             }
-            // 向上逼近
-            down--;
-            // 判断是否越界
-            if(up > down){
-                break;
+            down --;
+            if (down < up) {
+                return list;
             }
-            // 最左边一行
-            for(int row=down;row>=up;row--){
+            for (int row = down; row>=up; row--) {
                 list.add(matrix[row][left]);
             }
-            // 向右逼近
-            left++;
-            // 判断是否越界
-            if(left > right){
-                break;
+            left ++;
+            if (left > right) {
+                return list;
             }
         }
-        return list;
     }
-    
+
 //21.定义栈的数据结构，请在该类型中实现一个能够得到栈最小元素的min函数。
 //    思路：定义两个栈，一个存放入的值。另一个存最小值。
 
@@ -699,7 +744,7 @@ public class All {
 
     public void push(int node) {
         data.push(node);
-        if(min.empty()){
+        if (min.isEmpty()){
             min.push(node);
         }else{
             min.push(node <= min.peek()? node : min.peek());
@@ -714,7 +759,6 @@ public class All {
     public int top() {
         return data.peek();
     }
-
     public int min() {
         return min.peek();
     }
@@ -725,7 +769,7 @@ public class All {
 //    序列，但4,3,5,1,2就不可能是该压栈序列的弹出序列。（注意：这两个序列的长度是相等的）
 //    思路：用栈来压入弹出元素，相等则出栈。
 
-    public boolean IsPopOrder(int [] pushA,int [] popA) {
+    public boolean isPopOrder(int [] pushA, int [] popA) {
         if (pushA == null || popA == null) {
             return false;
         } 
@@ -752,7 +796,7 @@ public class All {
         LinkedList<TreeNode> queue= new LinkedList<>();
         queue.add(root);
 
-        while(!queue.isEmpty()){
+        while (!queue.isEmpty()){
             list.add(queue.pop().val);
             if (root.left!=null)
                 queue.add(root.left);
@@ -777,25 +821,25 @@ public class All {
      * @return
      */
     public boolean VerifySquenceOfBST(int [] sequence) {
-        if(sequence.length == 0){
+        if (sequence.length == 0){
             return false;
         }
-        if(sequence.length == 1){
+        if (sequence.length == 1){
             return true;
         }
         return judge(sequence,0,sequence.length-1);
     }
 
-    public boolean judge(int[] a,int start,int end){
-        if(start >= end){
+    public boolean judge(int[] a, int start, int end){
+        if (start >= end){
             return true;
         }
         int i = start;
-        while(a[i] < a[end]){
+        while (a[i] < a[end]){
             ++i;
         }
-        for(int j=i;j<end;j++){
-            if(a[j] < a[end]){
+        for (int j=i;j<end;j++){
+            if (a[j] < a[end]){
                 return false;
             }
         }
@@ -814,12 +858,12 @@ public class All {
     private ArrayList<ArrayList<Integer>> paths = new ArrayList<ArrayList<Integer>>();
     private Stack<Integer> path = new Stack<Integer>();
     public ArrayList<ArrayList<Integer>> findPath(TreeNode root,int target) {
-        if(root == null){
+        if (root == null){
             return paths;
         }
         path.push(root.val);
         target = target -root.val;
-        if(target == 0 && root.left == null && root.right == null){
+        if (target == 0 && root.left == null && root.right == null){
             paths.add(new ArrayList<Integer>(path));
         }
         findPath(root.left, target);
@@ -853,14 +897,14 @@ public class All {
         HashMap<RandomListNode,RandomListNode> map = new HashMap<>(); //创建HashMap集合
         RandomListNode cur=head;
         //复制结点值
-        while(cur!=null){
+        while (cur!=null){
             //存储put:<key,value1>
             map.put(cur,new RandomListNode(cur.val)); //顺序遍历，存储老结点和新结点(先存储新创建的结点值)
             cur=cur.next;
         }
         //复制结点指向
         cur = head;
-        while(cur!=null){
+        while (cur!=null){
             //得到get:<key>.value2,3
             map.get(cur).next = map.get(cur.next); //新结点next指向同旧结点的next指向
             map.get(cur).random = map.get(cur.random); //新结点random指向同旧结点的random指向
@@ -881,13 +925,13 @@ public class All {
      * @return
      */
     public RandomListNode clone2(RandomListNode pHead) {
-        if(pHead == null) {
+        if (pHead == null) {
             return null;
         }
 
         RandomListNode currentNode = pHead;
         //1、复制每个结点，如复制结点A得到A1，将结点A1插到结点A后面；
-        while(currentNode != null){
+        while (currentNode != null){
             RandomListNode cloneNode = new RandomListNode(currentNode.val);
             RandomListNode nextNode = currentNode.next;
             currentNode.next = cloneNode;
@@ -897,7 +941,7 @@ public class All {
 
         currentNode = pHead;
         //2、重新遍历链表，复制老结点的随机指针给新结点，如A1.random = A.random.next;
-        while(currentNode != null) {
+        while (currentNode != null) {
             currentNode.next.random = currentNode.random==null?null:currentNode.random.next;
             currentNode = currentNode.next.next;
         }
@@ -905,7 +949,7 @@ public class All {
         //3、拆分链表，将链表拆分为原链表和复制后的链表
         currentNode = pHead;
         RandomListNode pCloneHead = pHead.next;
-        while(currentNode != null) {
+        while (currentNode != null) {
             RandomListNode cloneNode = currentNode.next;
             currentNode.next = cloneNode.next;
             cloneNode.next = cloneNode.next==null?null:cloneNode.next.next;
@@ -922,13 +966,13 @@ public class All {
 //    思路：中序遍历
 
     public TreeNode convert(TreeNode pRootOfTree) {
-        if(pRootOfTree == null){
+        if (pRootOfTree == null){
             return null;
         }
         ArrayList<TreeNode> list = new ArrayList<>();
         midOrder(pRootOfTree,list);
         // 遍历list中的节点，改变指向
-        for(int i = 0; i < list.size() - 1; ++i){
+        for (int i = 0; i < list.size() - 1; ++i){
             list.get(i).right = list.get(i + 1);
             list.get(i + 1).left = list.get(i);
         }
@@ -939,11 +983,11 @@ public class All {
      * 中序遍历二叉树，然后讲元素添加到list
      */
     public void midOrder(TreeNode pRootOfTree, ArrayList<TreeNode> list){
-        if(pRootOfTree.left != null){
+        if (pRootOfTree.left != null){
             midOrder(pRootOfTree.left,list);
         }
         list.add(pRootOfTree);
-        if(pRootOfTree.right != null){
+        if (pRootOfTree.right != null){
             midOrder(pRootOfTree.right,list);
         }
     }
@@ -965,13 +1009,13 @@ public class All {
         return res.toArray(new String[res.size()]);
     }
     void dfs(int x) {
-        if(x == c.length - 1) {
+        if (x == c.length - 1) {
             res.add(String.valueOf(c)); // 添加排列方案
             return;
         }
         HashSet<Character> set = new HashSet<>();
-        for(int i = x; i < c.length; i++) {
-            if(set.contains(c[i])) continue; // 重复，因此剪枝
+        for (int i = x; i < c.length; i++) {
+            if (set.contains(c[i])) continue; // 重复，因此剪枝
             set.add(c[i]);
             swap(i, x); // 交换，将 c[i] 固定在第 x 位
             dfs(x + 1); // 开启固定第 x + 1 位字符
@@ -994,24 +1038,24 @@ public class All {
     public int MoreThanHalfNum_Solution(int [] array) {
         int res=array[0];
         int count=1;
-        for(int i=1;i<array.length;i++){
-            if(array[i]==res){
+        for (int i=1;i<array.length;i++){
+            if (array[i]==res){
                 count++;
             }else{
                 count--;
             }
-            if(count==0){
+            if (count==0){
                 res=array[i];
                 count=1;
             }
         }
         count=0;
-        for(int i=0;i<array.length;i++){
-            if(res==array[i]){
+        for (int i=0;i<array.length;i++){
+            if (res==array[i]){
                 count++;
             }
         }
-        if(count>array.length/2){
+        if (count>array.length/2){
             return res;
         }
         return 0;
@@ -1027,20 +1071,23 @@ public class All {
         int half=array.length/2;
         for (int i=0;i<array.length;i++)
         {
-            if (array[i]==array[half])
+            if (array[i]==array[half]) {
                 count++;
+            }
         }
-        if (count>half)
+        if (count>half) {
             return array[half];
-        else
+        }
+        else {
             return 0;
+        }
 
     }
 
 //30.输入n个整数，找出其中最小的K个数。
 //    思路：先将前K个数放入数组，进行堆排序，若之后的数比它还小，则进行调整
      
-    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+    public ArrayList<Integer> getLeastNumbers_Solution(int [] input, int k) {
         ArrayList<Integer> list = new ArrayList<>();
         if (input == null || k <= 0 || k > input.length) {
             return list;
@@ -1049,8 +1096,8 @@ public class All {
 
         // 创建大根堆
         buildHeap(kArray);
-        for(int i = k; i < input.length; i++) {
-            if(input[i] < kArray[0]) {
+        for (int i = k; i < input.length; i++) {
+            if (input[i] < kArray[0]) {
                 kArray[0] = input[i];
                 maxHeap(kArray, 0);
             }
@@ -1069,13 +1116,13 @@ public class All {
         int left=2*i+1;
         int right=left+1;
         int largest=0;
-        if(left < array.length && array[left] > array[i])
+        if (left < array.length && array[left] > array[i])
             largest=left;
         else
             largest=i;
-        if(right < array.length && array[right] > array[largest])
+        if (right < array.length && array[right] > array[largest])
             largest = right;
-        if(largest != i) {
+        if (largest != i) {
             int temp = array[i];
             array[i] = array[largest];
             array[largest] = temp;
@@ -1089,16 +1136,16 @@ public class All {
      * @param k
      * @return
      */
-    public ArrayList<Integer> GetLeastNumbers_Solution2(int [] input, int k) {
+    public ArrayList<Integer> getLeastNumbers_Solution2(int [] input, int k) {
         ArrayList<Integer> list = new ArrayList<>();
-        if(k > input.length || k <= 0 || input == null){
+        if (k > input.length || k <= 0 || input == null){
             return list;
         }
         PriorityQueue<Integer> pq = new PriorityQueue<>(input.length);
-        for(int i = 0; i < input.length; i++){
+        for (int i = 0; i < input.length; i++){
             pq.offer(input[i]);
         }
-        while(k > 0){
+        while (k > 0){
             list.add(pq.poll());
             k--;
         }
@@ -1110,11 +1157,11 @@ public class All {
      * @param input
 
      */
-    public ArrayList<Integer> GetLeastNumbers_Solution(int [] input, int k) {
+    public ArrayList<Integer> getLeastNumbers_Solution(int [] input, int k) {
         ArrayList<Integer> list = new ArrayList<>();
         Arrays.sort(input);
         int i = 0;
-        while(i < k && k <= input.length){
+        while (i < k && k <= input.length){
             list.add(input[i]);
             i++;
         }
@@ -1126,8 +1173,9 @@ public class All {
 //    思路：若和小于0，则将最大和置为当前值，否则计算最大和。
      
     public int FindGreatestSumOfSubArray(int[] array) {
-        if (array == null || array.length == 0)
+        if (array == null || array.length == 0) {
             return 0;
+        }
         int cur = array[0];
         int greast = array[0];
         for (int i = 1; i < array.length; i++) {
@@ -1150,7 +1198,7 @@ public class All {
      */
     public int findGreatestSumOfSubArray(int[] array) {
         int maxSum = array[0], curSum = array[0];
-        for(int i=1; i<array.length; i++){
+        for (int i=1; i<array.length; i++){
             curSum = Math.max(array[i], curSum + array[i]);
             maxSum = Math.max(maxSum, curSum);
         }
@@ -1182,7 +1230,7 @@ public class All {
             int count = 0;//1的个数
             int i = 1;//当前位
             int current = 0,after = 0,before = 0;
-            while((n/i)!= 0){
+            while ((n/i)!= 0){
                 current = (n/i)%10; //高位数字
                 before = n/(i*10); //当前位数字
                 after = n-(n/i)*i; //低位数字
@@ -1208,10 +1256,10 @@ public class All {
      */
     public int NumberOf1Between1AndN_Solution(int n) {
         int count = 0;
-        while(n>0){
+        while (n>0){
             String str = String.valueOf(n);
             char [] chars = str.toCharArray();
-            for(int i=0;i<chars.length;i++){
+            for (int i=0;i<chars.length;i++){
                 if(chars[i]=='1')
                     count++;
             }
@@ -1228,13 +1276,13 @@ public class All {
 //    用。
      
     public String PrintMinNumber(int [] numbers) {
-        if(numbers == null || numbers.length == 0) {
+        if (numbers == null || numbers.length == 0) {
             return "";
         }
         int len = numbers.length;
         String[] str = new String[len];
         StringBuilder sb = new StringBuilder();
-        for(int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++){
             str[i] = String.valueOf(numbers[i]);
         }
         Arrays.sort(str,new Comparator<String>(){
@@ -1245,7 +1293,7 @@ public class All {
                 return c1.compareTo(c2);
             }
         });
-        for(int i = 0; i < len; i++){
+        for (int i = 0; i < len; i++){
             sb.append(str[i]);
         }
         return sb.toString();
@@ -1279,8 +1327,9 @@ public class All {
 //    思路：乘2或3或5，之后比较取最小值。
      
     public int GetUglyNumber_Solution(int index) {
-        if (index <= 0)
+        if (index <= 0) {
             return 0;
+        }
         int[] arr = new int[index];
         arr[0] = 1;
         int multiply2 = 0;
@@ -1289,12 +1338,15 @@ public class All {
         for (int i = 1; i < index; i++) {
             int min = Math.min(arr[multiply2] * 2,Math.min(arr[multiply3] * 3,arr[multiply5] * 5));
             arr[i] = min;
-            if (arr[multiply2] * 2 == min)
+            if (arr[multiply2] * 2 == min) {
                 multiply2++;
-            if (arr[multiply3] * 3 == min)
+            }
+            if (arr[multiply3] * 3 == min) {
                 multiply3++;
-            if (arr[multiply5] * 5 == min)
+            }
+            if (arr[multiply5] * 5 == min) {
                 multiply5++;
+            }
         }
         return arr[index - 1];
     }
@@ -1311,7 +1363,7 @@ public class All {
      * 只不过不是同时成乘以2、3、5，而是在需要的时候乘以2、3、5.
      */
 
-    public int GetUglyNumber_Solution(int index) {
+    public int getUglyNumber_Solution(int index) {
         if(index <= 0)return 0;
         int p2=0,p3=0,p5=0;//初始化三个指向三个潜在成为最小丑数的位置
         int[] result = new int[index];
