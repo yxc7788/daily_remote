@@ -777,6 +777,7 @@ public class All {
         int index = 0;
         for (int i = 0; i < pushA.length; i++) {
             stack.push(pushA[i]);
+            // 注意这里需要判断stack是否是null
             while (!stack.isEmpty() && stack.peek() == popA[index]) {
                 stack.pop();
                 index++;
@@ -789,23 +790,23 @@ public class All {
 //23.从上往下打印出二叉树的每个节点，同层节点从左至右打印。
 //    思路：利用队列（链表）辅助实现。
 
-    public ArrayList<Integer> PrintFromTopToBottom(TreeNode root) {
-        ArrayList<Integer> list = new ArrayList<>();
-        if (root==null)return list;
-        //用链表生成队列
-        LinkedList<TreeNode> queue= new LinkedList<>();
-        queue.add(root);
+    public ArrayList<Integer> printFromTopToBottom(TreeNode root) {
+        ArrayList<Integer> list = new ArrayList();
+        if (root ==null) {
+            return list;
+        }
+        LinkedList<TreeNode> queue = new LinkedList();
+        queue.push(root);
 
-        while (!queue.isEmpty()){
-            list.add(queue.pop().val);
-            if (root.left!=null)
-                queue.add(root.left);
-
-            if (root.right!=null)
-                queue.add(root.right);
-
-            if (!queue.isEmpty())
-                root=queue.peek();
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            list.add(node.val);
+            if (node.left!=null) {
+                queue.add(node.left);
+            }
+            if (node.right!=null) {
+                queue.add(node.right);
+            }
         }
         return list;
     }
@@ -850,11 +851,13 @@ public class All {
 //25.输入一颗二叉树和一个整数，打印出二叉树中结点值的和为输入整数的所有路径。路径定义为从树的根结
 //    点开始往下一直到叶结点所经过的结点形成一条路径。
 //    思路：先保存根节点，然后分别递归在左右子树中找目标值，若找到即到达叶子节点，打印路径中的值
+//    https://leetcode-cn.com/problems/er-cha-shu-zhong-he-wei-mou-yi-zhi-de-lu-jing-lcof/solution/mian-shi-ti-34-er-cha-shu-zhong-he-wei-mou-yi-zh-5/
 
 
     /**
      * 方法 方法中存在先序遍历
      */
+    class
     private ArrayList<ArrayList<Integer>> paths = new ArrayList<ArrayList<Integer>>();
     private Stack<Integer> path = new Stack<Integer>();
     public ArrayList<ArrayList<Integer>> findPath(TreeNode root,int target) {
@@ -872,6 +875,24 @@ public class All {
         return paths;
     }
 
+    /**
+     * 牛客通过的
+     */
+    ArrayList<ArrayList<Integer>> res = new ArrayList();
+    ArrayList<Integer> list = new ArrayList();
+    public ArrayList<ArrayList<Integer>> FindPath(TreeNode root,int target) {
+        if (root == null) {
+            return res;
+        }
+        list.add(root.val);
+        if (root.val == target && root.left == null && root.right == null) {
+            res.add(new ArrayList(list));
+        }
+        FindPath(root.left, target - root.val);
+        FindPath(root.right, target - root.val);
+        list.remove(path.size() - 1);
+        return res;
+    }
 //26.输入一个复杂链表（每个节点中有节点值，以及两个指针，一个指向下一个节点，另一个特殊指针指向任
 //    意一个节点），返回结果为复制后复杂链表的head。（注意，输出结果中请不要返回参数中的节点引用，否则
 //    判题程序会直接返回空）
@@ -963,9 +984,9 @@ public class All {
 
 //27.二叉搜索树与双向链表，输入一棵二叉搜索树，将该二叉搜索树转换成一个排序的双向链表。要求不能创建任何新的结点，只能调
 //    整树中结点指针的指向。
-//    思路：中序遍历
+//    思路：中序遍历 https://leetcode-cn.com/problems/er-cha-sou-suo-shu-yu-shuang-xiang-lian-biao-lcof/solution/mian-shi-ti-36-er-cha-sou-suo-shu-yu-shuang-xian-5/
 
-    public TreeNode convert(TreeNode pRootOfTree) {
+    public TreeNode convert1(TreeNode pRootOfTree) {
         if (pRootOfTree == null){
             return null;
         }
@@ -976,9 +997,11 @@ public class All {
             list.get(i).right = list.get(i + 1);
             list.get(i + 1).left = list.get(i);
         }
+        // 如果需要双向循环链表，需要下面两行代码
+        // list.get(0).left = list.get(list.size()-1);
+        // list.get(list.size()-1).right =list.get(0);//进行头节点和尾节点的相互指向，这两句的顺序也是可以颠倒的
         return list.get(0);
     }
-
     /**
      * 中序遍历二叉树，然后讲元素添加到list
      */
@@ -992,6 +1015,41 @@ public class All {
         }
     }
 
+    /**
+     * 注意下面这个是双向循环链表，注意区分
+     */
+    TreeNode head, pre;
+    public TreeNode treeToDoublyList(TreeNode root) {
+        if(root==null) return null;
+        convert(root);
+
+        pre.right = head;
+        head.left =pre;//进行头节点和尾节点的相互指向，这两句的顺序也是可以颠倒的
+
+        return head;
+
+    }
+
+    public void convert(TreeNode cur){
+        if(cur==null) {
+            return;
+        }
+        convert(cur.left);
+        //pre用于记录双向链表中位于cur左侧的节点，即上一次迭代中的cur,当pre==null时，cur左侧没有节点,即此时cur为双向链表中的头节点
+        if (pre==null) {
+            head = cur;
+        }
+        //反之，pre!=null时，cur左侧存在节点pre，需要进行pre.right=cur的操作。
+        else {
+            pre.right = cur;
+        }
+        cur.left = pre;// pre是否为null对这句没有影响,且这句放在上面两句if else之前也是可以的。
+        pre = cur;// pre指向当前的cur
+        convert(cur.right);// 全部迭代完成后，pre指向双向链表中的尾节点
+    }
+
+
+
 
 
 //    28.输入一个字符串,按字典序打印出该字符串中字符的所有排列。例如输入字符串abc,则打印出由字符a,b,c所
@@ -999,34 +1057,56 @@ public class All {
 //    思路：将当前位置的字符和前一个字符位置交换，递归。 参考了leetcode 46题 全排列
 
 
-    // https://leetcode-cn.com/problems/zi-fu-chuan-de-pai-lie-lcof/solution/mian-shi-ti-38-zi-fu-chuan-de-pai-lie-hui-su-fa-by/
+   // https://www.nowcoder.com/questionTerminal/fe6b651b66ae47d7acce78ffdd9a96c7
 
-    List<String> res = new LinkedList<>();
-    char[] c;
-    public String[] permutation(String s) {
-        c = s.toCharArray();
-        dfs(0);
-        return res.toArray(new String[res.size()]);
-    }
-    void dfs(int x) {
-        if (x == c.length - 1) {
-            res.add(String.valueOf(c)); // 添加排列方案
-            return;
+    // 注意leetcode 46道题是无重复的，本题可以有重复
+
+    // 对于无重复值的情况
+    //     *
+    //     * 固定第一个字符，递归取得首位后面的各种字符串组合；
+    //     * 再把第一个字符与后面每一个字符交换，并同样递归获得首位后面的字符串组合； *递归的出口，就是只剩一个字符的时候，递归的循环过程，就是从每个子串的第二个字符开始依次与第一个字符交换，然后继续处理子串。
+    //     *
+    //     * 假如有重复值呢？
+    //     * *由于全排列就是从第一个数字起，每个数分别与它后面的数字交换，我们先尝试加个这样的判断——如果一个数与后面的数字相同那么这两个数就不交换了。
+    //     * 例如abb，第一个数与后面两个数交换得bab，bba。然后abb中第二个数和第三个数相同，就不用交换了。
+    //     * 但是对bab，第二个数和第三个数不 同，则需要交换，得到bba。
+    //     * 由于这里的bba和开始第一个数与第三个数交换的结果相同了，因此这个方法不行。
+    //     *
+    //     * 换种思维，对abb，第一个数a与第二个数b交换得到bab，然后考虑第一个数与第三个数交换，此时由于第三个数等于第二个数，
+    //     * 所以第一个数就不再用与第三个数交换了。再考虑bab，它的第二个数与第三个数交换可以解决bba。此时全排列生成完毕！
+   public ArrayList<String> permutation(String str){
+
+       ArrayList<String> list = new ArrayList<String>();
+       if (str!=null && str.length()>0){
+           permutationHelper(str.toCharArray(),0,list);
+           Collections.sort(list);
+       }
+       return list;
+   }
+    private void permutationHelper(char[] chars, int i, ArrayList<String> list){
+        if (i == chars.length-1){
+            list.add(String.valueOf(chars));
+        }else{
+            Set<Character> charSet = new HashSet<Character>();
+            for (int j=i;j<chars.length;++j){
+                if (j==i || !charSet.contains(chars[j])){
+                    charSet.add(chars[j]);
+                    swap(chars,i,j);
+                    permutationHelper(chars,i+1,list);
+                    swap(chars,j,i);
+                }
+            }
         }
-        HashSet<Character> set = new HashSet<>();
-        for (int i = x; i < c.length; i++) {
-            if (set.contains(c[i])) continue; // 重复，因此剪枝
-            set.add(c[i]);
-            swap(i, x); // 交换，将 c[i] 固定在第 x 位
-            dfs(x + 1); // 开启固定第 x + 1 位字符
-            swap(i, x); // 恢复交换
-        }
     }
-    void swap(int a, int b) {
-        char tmp = c[a];
-        c[a] = c[b];
-        c[b] = tmp;
+
+    private void swap(char[] cs, int i, int j){
+        char temp = cs[i];
+        cs[i] = cs[j];
+        cs[j] = temp;
     }
+
+
+
 
 
 
@@ -1426,8 +1506,28 @@ public class All {
         return res;
     }
 
-//36.在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。输入一个数组,
-//    求出这个数组中的逆序对的总数P
+    /**
+     * 牛客pass
+     */
+    public int FirstNotRepeatingChar(String str) {
+        if (str == null || str.length() == 0) {
+            return -1;
+        }
+        char [] ch = new char[256];
+        for (int i = 0; i < str.length(); i++) {
+            ch[str.charAt(i)] ++ ;
+        }
+
+        for(int i = 0; i < str.length(); i++) {
+            if (ch[str.charAt(i)] == 1) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+//36.在数组中的两个数字，如果前面一个数字大于后面的数字，则这两个数字组成一个逆序对。
+// 输入一个数组,求出这个数组中的逆序对的总数P。并将P对1000000007取模的结果输出。 即输出P%1000000007
 //    思路：本质是归并排序，在比较时加入全局变量count进行记录逆序对的个数，若data[start] >= data[index] ，
 //    则count值为mid+1-start
 
@@ -1515,12 +1615,33 @@ public class All {
         }
     }
 
+
+    /**
+     * 笨方法，冒泡排序，牛客时间复杂度不通过
+     */
+    public int inversePairs2(int [] array) {
+        int count = 0;
+        for (int i = 0; i < array.length; i++) {
+            for (int j = i+1 ;j < array.length; j++) {
+                if (array[i] > array[j]) {
+                    int tmp = array[i];
+                    array[i] = array[j];
+                    array[j] = tmp;
+                    count ++;
+                }
+            }
+        }
+        return count;
+    }
+
+
 //37.输入两个链表，找出它们的第一个公共结点。
 //    思路：先求出链表长度，然后长的链表先走多出的几步，然后两个链表同时向下走去寻找相同的节点，代码量
 //    少的方法需要将两个链表遍历两次，然后从头开始相同的节点。
      
     // 不需要遍历链表的解法
     public ListNode findFirstCommonNode(ListNode pHead1, ListNode pHead2) {
+        // 这里必须新建两个变量，不能用参数给的pHead1 和 pHead2
         ListNode p1 = pHead1;
         ListNode p2 = pHead2;
         while (p1 != p2){
@@ -1529,6 +1650,9 @@ public class All {
         }
         return p1;
     }
+
+
+
 
 //38.统计一个数字在排序数组中出现的次数。 输入[1,2,3,3,3,3,4,5],3 返回4
 //    思路：利用二分查找+递归思想，进行寻找。当目标值与中间值相等时进行判断
@@ -1684,6 +1808,56 @@ public class All {
     }
 
 
+    /**
+     * 牛客pass
+     * 下面这种解法时间复杂度高，多了很多重复计算
+     * https://www.nowcoder.com/questionTerminal/8b3b95850edb4115918ecebdf1b4d222
+     * @return
+     */
+    public boolean IsBalanced_Solution2(TreeNode root) {
+        if (root == null) {
+            return true;
+        }
+        return isBalance(root);
+
+    }
+    public boolean isBalance(TreeNode root) {
+
+        if (root == null) {
+            return true;
+        }
+        if(Math.abs(getDepth(root.left) - getDepth(root.right)) >1) {
+            return false;
+        }
+        return isBalance(root.left)&& isBalance(root.right);
+
+    }
+    public int getDepth2(TreeNode root) {
+        if (root == null) {
+            return 0;
+        }
+        return Math.max(getDepth(root.left),getDepth(root.right))+1 ;
+    }
+
+    /**
+     * 这种方法比较好，从底到上
+     */
+
+    public boolean IsBalanced_Solution3(TreeNode root) {
+        return getDepth(root) != -1;
+    }
+
+    private int getDepth3(TreeNode root) {
+        if (root == null) return 0;
+        int left = getDepth3(root.left);
+        if (left == -1) return -1;
+        int right = getDepth3(root.right);
+        if (right == -1) return -1;
+        return Math.abs(left - right) > 1 ? -1 : 1 + Math.max(left, right);
+    }
+
+
+
 //40.一个整型数组里除了两个数字之外，其他的数字都出现了两次。请写程序找出这两个只出现一次的数字。
 //    思路：两个相同的数异或后为0，将所有数异或后得到一个数，然后求得1在该数最右边出现的index，然后判
 //    断每个数右移index后是不是1。
@@ -1722,6 +1896,20 @@ public class All {
             }
         }
         return new int[]{a,b};
+    }
+
+
+    /**
+     * 如果是只有一个出现一次的数字，就用这种方法
+     * @param nums
+     * @return
+     */
+    public int singleNumber(int[] nums) {
+        int single = 0;
+        for (int num : nums) {
+            single ^= num;
+        }
+        return single;
     }
 
 
@@ -2410,9 +2598,9 @@ public class All {
     }
 
 
-//57.在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指
-//    针。
-//    思路：先新建一个头节点，然后向后查找值相同的节点，重复查找后删除
+//57.在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针
+// 注意这道题区别于删除后保留重复节点，以及删除链表中指定的节点
+//  思路：先新建一个头节点，然后向后查找值相同的节点，重复查找后删除
      
     public ListNode deleteDuplication(ListNode pHead) {
         if (pHead == null)
@@ -2442,6 +2630,32 @@ public class All {
     }
 
 
+    /**
+     * 方法2
+     */
+    public ListNode deleteDuplication2(ListNode pHead) {
+        if (pHead == null || pHead.next == null) {
+            return pHead;
+        }
+        ListNode Head = new ListNode(0);
+        Head.next = pHead;
+        ListNode pre = Head;
+        ListNode last = Head.next;
+        while (last != null) {
+            if (last.next != null && last.val == last.next.val) {
+                // 找到最后的一个相同节点
+                while (last.next != null && last.val == last.next.val) {
+                    last = last.next;
+                }
+                pre.next = last.next;
+                last = last.next;
+            } else {
+                pre = pre.next;
+                last = last.next;
+            }
+        }
+        return Head.next;
+    }
 //58.给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅
 //    包含左右子结点，同时包含指向父结点的指针。
 //    思路：若节点右孩子存在，则设置一个指针从该节点的右孩子出发，一直沿着指向左子结点的指针找到的叶子

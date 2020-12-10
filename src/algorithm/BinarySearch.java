@@ -3,7 +3,7 @@ package algorithm;
 /**
  * @author yangxc27652
  * @date 2020/11/29
- * @description
+ * @description 二分查找
  */
 public class BinarySearch {
 

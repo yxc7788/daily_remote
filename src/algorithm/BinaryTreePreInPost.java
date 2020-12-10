@@ -119,5 +119,76 @@ public class BinaryTreePreInPost {
         return res;
     }
 
+    /**
+     * 方法3
+     */
+    public void postOrderTraverse3(TreeNode root) {
+        TreeNode cur, pre = null;
 
+        Stack<TreeNode> stack = new Stack<>();
+        stack.push(root);
+
+        while (!stack.empty()) {
+            cur = stack.peek();
+            if ((cur.left == null && cur.right == null) || (pre != null && (pre == cur.left || pre == cur.right))) {
+                System.out.print(cur.val + "->");
+                stack.pop();
+                pre = cur;
+            } else {
+                if (cur.right != null) {
+                    stack.push(cur.right);
+                }
+                if (cur.left != null) {
+                    stack.push(cur.left);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * 递归实现前序
+     */
+    public void preOrderTraverse1(TreeNode root) {
+        if (root != null) {
+            System.out.print(root.val + "->");
+            preOrderTraverse1(root.left);
+            preOrderTraverse1(root.right);
+        }
+    }
+    /**
+     * 这样写也可以
+     */
+    public void preOrderTraverse2(TreeNode root) {
+        if (root == null) {
+            return;
+        }
+        System.out.print(root.val + "->");
+        preOrderTraverse1(root.left);
+        preOrderTraverse1(root.right);
+    }
+
+    /**
+     * 递归中序
+     */
+    public void inOrderTraverse(TreeNode root) {
+        if (root != null) {
+            inOrderTraverse(root.left);
+            System.out.print(root.val + "->");
+            inOrderTraverse(root.right);
+        }
+    }
+
+
+    /**
+     *
+     * 递归后序遍历
+     */
+    public void postOrderTraverse(TreeNode root) {
+        if (root != null) {
+            postOrderTraverse(root.left);
+            postOrderTraverse(root.right);
+            System.out.print(root.val + "->");
+        }
+    }
 }
