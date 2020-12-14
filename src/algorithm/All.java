@@ -1532,47 +1532,6 @@ public class All {
 //    则count值为mid+1-start
 
     /**
-     * 方法1
-     */
-    public static int inversePairs(int [] array) {
-        if(array == null) return 0;
-        int[] tmp = new int[array.length];
-        return mergeSort(array, tmp, 0, array.length-1);
-    }
-    //归并排序，递归
-    private static int mergeSort(int[] array, int[] tmp, int low, int high) {
-        if(low >= high) return 0;
-        int res = 0, mid = low + (high - low) / 2;
-        res += mergeSort(array, tmp, low, mid);
-        res %= 1000000007;
-        res += mergeSort(array, tmp, mid + 1, high);
-        res %= 1000000007;
-        res += merge(array, tmp, low, mid, high);
-        res %= 1000000007;
-        return res;
-    }
-    //归并排序，合并
-    private static int merge(int[] array, int[] tmp, int low, int mid, int high) {
-        int i1 = low, i2 = mid + 1,k = low;
-        int res = 0;
-        while(i1 <= mid && i2 <= high) {
-            if(array[i1] > array[i2]) {
-                res += mid - i1 + 1;
-                res %= 1000000007;
-                tmp[k++] = array[i2++];
-            } else
-                tmp[k++] = array[i1++];
-        }
-        while(i1 <= mid)
-            tmp[k++] = array[i1++];
-        while(i2 <= high)
-            tmp[k++] = array[i2++];
-        for (int i = low; i <= high; i++)
-            array[i] = tmp[i];
-        return res;
-    }
-
-    /**
      * 方法2
      */
     int count = 0;
@@ -1615,6 +1574,59 @@ public class All {
         }
     }
 
+
+
+
+    //统计逆序对的个数
+    int cnt;
+    public int InversePairs2(int [] array) {
+        if(array.length != 0){
+            divide(array,0,array.length-1);
+        }
+        return cnt;
+    }
+
+    //归并排序的分治---分
+    private void divide(int[] arr,int start,int end){
+        //递归的终止条件
+        if(start >= end)
+            return;
+        //计算中间值，注意溢出
+        int mid = start + (end - start)/2;
+
+        //递归分
+        divide(arr,start,mid);
+        divide(arr,mid+1,end);
+
+        //治
+        merge2(arr,start,mid,end);
+    }
+
+    private void merge2(int[] arr,int start,int mid,int end){
+        int[] temp = new int[end-start+1];
+
+        //存一下变量
+        int i=start,j=mid+1,k=0;
+        //下面就开始两两进行比较，若前面的数大于后面的数，就构成逆序对
+        while(i<=mid && j<=end){
+            //若前面小于后面，直接存进去，并且移动前面数所在的数组的指针即可
+            if(arr[i] <= arr[j]){
+                temp[k++] = arr[i++];
+            }else{
+                temp[k++] = arr[j++];
+                //a[i]>a[j]了，那么这一次，从a[i]开始到a[mid]必定都是大于这个a[j]的，因为此时分治的两边已经是各自有序了
+                cnt = (cnt+mid-i+1)%1000000007;
+            }
+        }
+        //各自还有剩余的没比完，直接赋值即可
+        while(i<=mid)
+            temp[k++] = arr[i++];
+        while(j<=end)
+            temp[k++] = arr[j++];
+        //覆盖原数组
+        for (k = 0; k < temp.length; k++)
+            arr[start + k] = temp[k];
+    }
 
     /**
      * 笨方法，冒泡排序，牛客时间复杂度不通过
@@ -2070,56 +2082,15 @@ public class All {
 
 
 
-//42.1对于一个给定的字符序列S，请你把其循环左移K位后的序列输出
-//    思路：拼接或反转三次字符串
-     
-    public String LeftRotateString(String str,int n) {
-        if (str == null || str.length() == 0)
-            return str;
-        String s1 = reverse(str.substring(0,n));
-        String s2 = reverse(str.substring(n,str.length()));
-        return reverse(s2)+reverse(s1);
-    }
 
+//43.把n个骰子扔在地上，所有骰子朝上一面的点数之和为s。输入n，打印出s的所有可能的值出现的概率。
+//你需要用一个浮点数数组返回答案，其中第 i 个元素代表这 n 个骰子所能掷出的点数集合中第 i 小的那个的概率。
+//输入: 1
+//输出: [0.16667,0.16667,0.16667,0.16667,0.16667,0.16667]
+//输入: 2
+//输出: [0.02778,0.05556,0.08333,0.11111,0.13889,0.16667,0.13889,0.11111,0.08333,0.05556,0.02778]
 
-//43.把n个骰子扔在地上，所有骰子朝上一面的点数之和为s,输入n,打印出s的所有可能出现的概率
-//    思路：递归一般是自顶向下的分析求解，而循环则是自底向上，占用更少的空间和更少的时间，性能较好。定
-//    义一个二维数组，第一次掷骰子有6种可能，第一个骰子投完的结果存到probabilities[0]；第二次开始掷骰子，
-//    在下一循环中，我们加上一个新骰子，此时和为n的骰子出现次数应该等于上一次循环中骰子点数和为n-1,n-
-//            2,n-3, n-4,n-5，n-6的次数总和，所以我们把另一个数组的第n个数字设为前一个数组对应n-1,n-2,n-3,n-4,n-5，
-//    n-6之和
      
-    public void printProbability(int number) {
-        if(number<1)
-            return ;
-        int g_maxValue=6;
-        int[][] probabilities=new int[2][];
-        probabilities[0]=new int[g_maxValue*number+1];
-        probabilities[1]=new int[g_maxValue*number+1];
-        int flag=0;
-        // 当第一次抛掷骰子时，有6种可能，每种可能出现一次
-        for(int i=1;i<=g_maxValue;i++)
-            probabilities[0][i]=1;
-        //从第二次开始掷骰子，假设第一个数组中的第n个数字表示骰子和为n出现的次数，
-        for(int k=2;k<=number;++k) {
-            for(int i=0;i<k;++i)
-        // 第k次掷骰子，和最小为k，小于k的情况是不可能发生的,令不可能发生的次数设置为0！
-                probabilities[1-flag][i]=0;
-        // 第k次掷骰子，和最小为k，最大为g_maxValue*k
-            for(int i=k;i<=g_maxValue*k;++i) {
-        // 初始化，因为这个数组要重复使用，上一次的值要清0
-                probabilities[1-flag][i]=0;
-                for(int j=1;j<=i && j<=g_maxValue;++j)
-                    probabilities[1-flag][i]+=probabilities[flag][i-j];
-            } flag=1-flag;
-        }
-        double total=Math.pow(g_maxValue, number);
-        for(int i=number;i<=g_maxValue*number;i++) {
-            double ratio=(double) probabilities[flag][i]/total;
-            System.out.println(i);
-            System.out.println(ratio);
-        }
-    }
 
 
 //44.扑克牌的顺子。LL今天心情特别好,因为他去买了一副扑克牌,发现里面居然有2个大王,2个小王(一副牌原本是54张^_^)...
@@ -2384,7 +2355,7 @@ public class All {
      * @param q
      * @return
      */
-    public algorithm.TreeNode lowestCommonAncestor2(algorithm.TreeNode root, algorithm.TreeNode p, algorithm.TreeNode q) {
+    public TreeNode lowestCommonAncestor2(TreeNode root, TreeNode p, TreeNode q) {
         // 如果树为空，直接返回null
         if (root == null) {
             return null;
@@ -2394,9 +2365,9 @@ public class All {
             return root;
         }
         // 递归遍历左子树，只要在左子树中找到了p或q，则先找到谁就返回谁
-        algorithm.TreeNode left = lowestCommonAncestor(root.left, p, q);
+        TreeNode left = lowestCommonAncestor(root.left, p, q);
         // 递归遍历右子树，只要在右子树中找到了p或q，则先找到谁就返回谁
-        algorithm.TreeNode right = lowestCommonAncestor(root.right, p, q);
+        TreeNode right = lowestCommonAncestor(root.right, p, q);
 
         // 如果在左子树中 p和 q都找不到，则 p和 q一定都在右子树中，右子树中先遍历到的那个就是最近公共祖先（一个节点也可以是它自己的祖先）
         if (left == null) {
@@ -2416,21 +2387,20 @@ public class All {
 
 
 //51.在一个长度为n的数组里的所有数字都在0到n-1的范围内，找出数组中任意一个重复的数字
-//    思路：若下标大于length，则减去length，最后再加上length，若下标的数组值大于length，则返回true。或使
-//    用辅助空间（HashSet）
-     
+/
+
     public boolean duplicate(int numbers[],int length,int [] duplication) {
-        if (numbers == null || length == 0 || length == 1)
+        if (numbers == null || numbers.length == 0) {
             return false;
-        for (int i = 0; i < length; i++) {
-            int index = numbers[i];
-            if (index >= length)
-                index -= length;
-            if (numbers[index] >= length) {
-                duplication[0] = index;
+        }
+        int [] nums  = new int [10];
+        for (int i = 0; i < numbers.length; i++) {
+            if (nums[numbers[i]] == 0) {
+                nums[numbers[i]] ++;
+            }else {
+                duplication[0] = numbers[i];
                 return true;
             }
-            numbers[index] += length;
         }
         return false;
     }
@@ -2459,6 +2429,7 @@ public class All {
         }
         return B;
     }
+
 
 //53.请实现一个函数用来匹配包括'.'和''的正则表达式。模式中的字符'.'表示任意一个字符，而''表示它前面的字符
 //    可以出现任意次（包含0次）
