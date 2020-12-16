@@ -2523,6 +2523,39 @@ public class All {
         return true;
     }
 
+
+
+    public boolean isNumeric2(char[] str) {
+
+        if(str.length==0)
+            return false;
+        if(str.length==1)
+            if(str[0] < '0' || str[0] > '9')
+                return false;
+
+        // 标记符号、小数点、e是否出现过
+        boolean sign = false, decimal = false, hasE = false;
+        for (int i = 0; i < str.length; i++) {
+            if (str[i] == 'e' || str[i] == 'E') {
+                if (i == str.length-1) return false; // e后面一定要接数字
+                if (hasE) return false;  // 不能同时存在两个e
+                hasE = true;
+            } else if (str[i] == '+' || str[i] == '-') {
+                // 第二次出现+-符号，则必须紧接在e之后
+                if (sign && str[i-1] != 'e' && str[i-1] != 'E') return false;
+                // 第一次出现+-符号，且不是在字符串开头，则也必须紧接在e之后
+                if (!sign && i > 0 && str[i-1] != 'e' && str[i-1] != 'E') return false;
+                sign = true;
+            } else if (str[i] == '.') {
+                // e后面不能接小数点，小数点不能出现两次
+                if (hasE || decimal) return false;
+                decimal = true;
+            } else if (str[i] < '0' || str[i] > '9') // 不合法字符
+                return false;
+        }
+        return true;
+    }
+
 //55.请实现一个函数用来找出字符流中第一个只出现一次的字符。
 //    思路：借助辅助空间进行判断，如字符数组。
      
@@ -2562,7 +2595,7 @@ public class All {
                 while (fast != slow) {
                     fast = fast.next;
                     slow = slow.next;
-                } if (fast == slow)
+                }
                 return slow;
             }
         } return null;
@@ -2573,46 +2606,16 @@ public class All {
 // 注意这道题区别于删除后保留重复节点，以及删除链表中指定的节点
 //  思路：先新建一个头节点，然后向后查找值相同的节点，重复查找后删除
      
-    public ListNode deleteDuplication(ListNode pHead) {
-        if (pHead == null)
-            return null;
-        // 新建一个节点，防止头结点被删除
-        ListNode first = new ListNode(-1);
-        first.next = pHead;
-        ListNode p = pHead;
-        // 指向前一个节点
-        ListNode preNode = first;
-        while (p != null && p.next != null) {
-            if (p.val == p.next.val) {
-                int val = p.val;
-                // 向后重复查找
-                while (p != null && p.val == val) {
-                    p = p.next;
-                }
-                // 上个非重复值指向下一个非重复值：即删除重复值
-                preNode.next = p;
-            }else {
-                // 如果当前节点和下一个节点值不等，则向后移动一位
-                preNode = p;
-                p = p.next;
-            }
-        }
-        return first.next;
-    }
 
-
-    /**
-     * 方法2
-     */
     public ListNode deleteDuplication2(ListNode pHead) {
         if (pHead == null || pHead.next == null) {
             return pHead;
         }
-        ListNode Head = new ListNode(0);
-        Head.next = pHead;
-        ListNode pre = Head;
-        ListNode last = Head.next;
-        while (last != null) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = pHead;
+        ListNode pre = dummy;
+        ListNode last = dummy.next;
+        while (last != null && last.next != null) {
             if (last.next != null && last.val == last.next.val) {
                 // 找到最后的一个相同节点
                 while (last.next != null && last.val == last.next.val) {
@@ -2625,8 +2628,57 @@ public class All {
                 last = last.next;
             }
         }
-        return Head.next;
+        return dummy.next;
     }
+
+
+    public ListNode deleteDuplication(ListNode head) {
+        if (head == null || head.next == null) {
+            return head;
+        }
+        ListNode node = new ListNode(0);
+        node.next = head;
+        ListNode cur = head;
+        ListNode pre = node;
+        while (cur != null && cur.next != null) {
+            if (cur.val == cur.next.val) {
+                int val = cur.val;
+                //只需把下面的while改为注释的while，则会实现
+                // 链表1->2->3->3->4->4->5 处理后为 1->2->3->4->5
+                /*while (cur.next != null && cur.next.val == val) {
+                    cur.next = cur.next.next;
+                }*/
+                while (cur != null && cur.val == val) {
+                    cur = cur.next;
+                }
+                pre.next = cur;
+            } else {
+                pre = cur;
+                cur = cur.next;
+            }
+        }
+        return node.next;
+    }
+
+
+//  上面的题要区别下面的题：删除链表中的重复元素
+//  输入: 1->1->2->3->3
+//  输出: 1->2->3
+
+
+    public ListNode deleteDuplicates(ListNode head) {
+        ListNode p = head;
+        while (p != null){
+            // 注意这里 p.next 要判断为null，从空指针角度也能想到
+            if (p.next != null && p.val == p.next.val){
+                p.next = p.next.next;
+            }else{
+                p = p.next;
+            }
+        }
+        return head;
+    }
+
 //58.给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅
 //    包含左右子结点，同时包含指向父结点的指针。
 //    思路：若节点右孩子存在，则设置一个指针从该节点的右孩子出发，一直沿着指向左子结点的指针找到的叶子
@@ -2803,9 +2855,10 @@ public class All {
             list.add(node.val);
             start++;
             if (node.left != null)
+                // 注意queue不能用push方法，要用offer和add,切记
                 queue.offer(node.left);
             if (node.right != null)
-                queue.offer(node.right);
+                queue.push(node.right);
             if (start == end) {
                 start = 0;
                 end = queue.size();
@@ -2937,7 +2990,8 @@ public class All {
         if ((count3 & 1) == 1) {
             return Double.valueOf(maxHeap.peek());
         } else {
-            return Double.valueOf((minHeap.peek() + maxHeap.peek())) / 2;
+            // 注意这里 / 2 一定要在外面
+            return Double.valueOf(minHeap.peek() + maxHeap.peek()) / 2;
         }
     }
 
@@ -2999,7 +3053,8 @@ public class All {
     public int[] maxSlidingWindow2(int[] nums, int k) {
 
 
-        if(nums == null || nums.length < 2) {
+        // 这里注意k为0的情况
+        if(nums == null || nums.length < 2 || k == 0) {
             return nums;
         }
         // 双向队列 保存当前窗口最大值的数组位置 保证队列中数组位置的数值按从大到小排序
@@ -3033,7 +3088,7 @@ public class All {
 //    思路：回溯法，双层for循环，判断每一个点，每次递归调用上下左右四个点，用flag标志是否已经匹配
 //（return），进行判断点的位置是否越界，是否已经正确匹配，判断矩阵的路径与模式串的第index个字符是否
 //    匹配。
-     
+
     public boolean hasPath(char[] matrix, int rows, int cols, char[] str) {
         int flag[] = new int[matrix.length];
         for (int i = 0; i < rows; i++) {
@@ -3044,22 +3099,22 @@ public class All {
         }
         return false;
     }
-    private boolean helper(char[] matrix,int rows,int cols,int i,int j,char[] str,int k,int[] flag) {
+
+    private boolean helper(char[] matrix, int rows, int cols, int i, int j, char[] str, int k, int[] flag) {
         int index = i * cols + j;
         if (i < 0 || i >= rows || j < 0 || j >= cols || matrix[index] != str[k] || flag[index] == 1)
             return false;
-        if(k == str.length - 1)
-            return true;
+        if(k == str.length - 1) return true;
         flag[index] = 1;
-        if (helper(matrix, rows, cols, i - 1, j, str, k + 1, flag)
-                || helper(matrix, rows, cols, i + 1, j, str, k + 1, flag) || helper(matrix, rows, cols, i, j - 1, str, k + 1, flag)
-                || helper(matrix, rows, cols, i, j + 1, str, k + 1, flag)) {
+        if (helper(matrix, rows, cols, i + 1, j, str, k + 1, flag)
+                || helper(matrix, rows, cols, i - 1, j, str, k + 1, flag)
+                || helper(matrix, rows, cols, i, j + 1, str, k + 1, flag)
+                || helper(matrix, rows, cols, i, j - 1, str, k + 1, flag))
             return true;
-        }
+
         flag[index] = 0;
         return false;
     }
-
 
 //67. 地上有一个m行和n列的方格。一个机器人从坐标0,0的格子开始移动，
 //    每一次只能向左，右，上，下四个方向移动一格，但是不能进入行坐标和列坐标的数位之和大于k的格子。
