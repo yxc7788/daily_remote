@@ -23,6 +23,7 @@ public class CatchRainWater {
         int[] right_max = new int[size];
         left_max[0] = height[0];
         for (int i = 1; i < size; i++) {
+            // 这里必须用当前值进行比较所以用height【i】
             left_max[i] = Math.max(height[i], left_max[i - 1]);
         }
         right_max[size - 1] = height[size - 1];

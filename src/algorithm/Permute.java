@@ -18,6 +18,7 @@ import java.util.*;
  *   [3,1,2],
  *   [3,2,1]
  * ]
+ * 自己用[1,2,3,4]的例子自己画一下
  * https://leetcode-cn.com/problems/permutations/solution/hui-su-suan-fa-python-dai-ma-java-dai-ma-by-liweiw/
  */
 public class Permute {

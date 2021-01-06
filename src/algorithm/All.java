@@ -122,12 +122,7 @@ public class All {
      *     思路：先找出根节点，然后利用递归方法构造二叉树
      */
 
-    static class TreeNode {
-        int val;
-        TreeNode left;
-        TreeNode right;
-        TreeNode(int x) { val = x; }
-    }
+
     public TreeNode reConstructBinaryTree(int [] pre, int [] in) {
         if (pre == null || in == null) {
             return null;
@@ -857,7 +852,7 @@ public class All {
     /**
      * 方法 方法中存在先序遍历
      */
-    class
+
     private ArrayList<ArrayList<Integer>> paths = new ArrayList<ArrayList<Integer>>();
     private Stack<Integer> path = new Stack<Integer>();
     public ArrayList<ArrayList<Integer>> findPath(TreeNode root,int target) {
@@ -1106,7 +1101,65 @@ public class All {
     }
 
 
+    /**
+     * 笑抽，采用leetcode全排列那种方法
+     * 深度优先搜索，结果包含重复值，然后，对于结果中元素toString然后去重
+     * @param array
+     * @return
+     */
+    public ArrayList<String> Permutation(String str) {
+        char [] array = str.toCharArray();
+        int len = array.length;
+        // 使用一个动态数组保存所有可能的全排列
+        ArrayList<String> res = new ArrayList<>();
+        if (len == 0) {
+            return res;
+        }
 
+        boolean[] used = new boolean[len];
+        Stack<Character> path = new Stack<Character>();
+
+        dfs(array, len, 0, path, used, res);
+        return removeDuplicate(res);
+    }
+
+    private void dfs(char[] array, int len, int depth,
+                     Stack<Character> path, boolean[] used,
+                     ArrayList<String> res) {
+        if (depth == len) {
+            StringBuilder sb = new StringBuilder();
+            ArrayList strList = new ArrayList<>(path);
+            for (int i = 0; i< strList.size(); i++) {
+                sb.append(strList.get(i));
+            }
+            res.add(sb.toString());
+            return;
+        }
+
+        for (int i = 0; i < len; i++) {
+            if (!used[i]) {
+                path.push(array[i]);
+                used[i] = true;
+
+                System.out.println("  递归之前 => " + path);
+                dfs(array, len, depth + 1, path, used, res);
+
+                used[i] = false;
+                path.pop();
+                System.out.println("递归之后 => " + path);
+            }
+        }
+    }
+    // 简单方法遍历两次
+    public static ArrayList removeDuplicate(ArrayList list){
+        for(int i =0;i<list.size()-1;i++){
+            for(int j=i+1;j<list.size();j++){
+                if(list.get(i).toString().equals(list.get(j).toString()))
+                    list.remove(j);
+            }
+        }
+        return list;
+    }
 
 
 
@@ -1237,7 +1290,7 @@ public class All {
      * @param input
 
      */
-    public ArrayList<Integer> getLeastNumbers_Solution(int [] input, int k) {
+    public ArrayList<Integer> getLeastNumbers_Solution0(int [] input, int k) {
         ArrayList<Integer> list = new ArrayList<>();
         Arrays.sort(input);
         int i = 0;
@@ -2127,7 +2180,7 @@ public class All {
     }
 
 
-    public boolean isContinuous(int [] numbers) {
+    public boolean isContinuous1(int [] numbers) {
         if (numbers == null || numbers.length == 0)
             return false;
         int count = 0;
@@ -2155,7 +2208,7 @@ public class All {
      * 用一个set来填充数据，0不要放进去。set的大小加上0的个数必须为5个。此外set中数值差值在5以内。
      * @return
      */
-    public boolean isContinuous(int [] n) {
+    public boolean isContinuous0(int [] n) {
         if (n.length < 5 || n.length > 5) {
             return false;
         }
@@ -2209,7 +2262,7 @@ public class All {
      * ...
      * f[n] = (f[n-1] + m) % n
      */
-    public int LastRemaining_Solution ( int n, int m){
+    public int LastRemaining_Solution1 ( int n, int m){
         if (n == 0 || m == 0) return -1;
         int s = 0;
         for (int i = 2; i <= n; i++) {
@@ -2260,7 +2313,7 @@ public class All {
         return num1;
     }
 
-    public int Add(int num1,int num2) {
+    public int Add1(int num1,int num2) {
         int result = 0;
         int carry = 0;
         do{
@@ -2387,7 +2440,7 @@ public class All {
 
 
 //51.在一个长度为n的数组里的所有数字都在0到n-1的范围内，找出数组中任意一个重复的数字
-/
+
 
     public boolean duplicate(int numbers[],int length,int [] duplication) {
         if (numbers == null || numbers.length == 0) {
@@ -3101,6 +3154,7 @@ public class All {
     }
 
     private boolean helper(char[] matrix, int rows, int cols, int i, int j, char[] str, int k, int[] flag) {
+        // 注意idex取值为 i * cols + j， 因为每一行的个数为cols。
         int index = i * cols + j;
         if (i < 0 || i >= rows || j < 0 || j >= cols || matrix[index] != str[k] || flag[index] == 1)
             return false;
@@ -3230,6 +3284,7 @@ public class All {
      */
 
     public int integerBreak(int n) {
+        // 注意这里是n + 1， 因为 dp[1] = 1 dp[2] = 2  dp[3] = 3，下标是从0开始的
         int [] dp = new int [n+1];
         if (n<2) {
             return 1;
@@ -3299,6 +3354,42 @@ public class All {
         }
         return null;
     }
+
+    /**
+     一个机器人位于一个 m x n 网格的左上角 （起始点在下图中标记为“Start” ）。
+     机器人每次只能向下或者向右移动一步。机器人试图达到网格的右下角（在下图中标记为“Finish”）。
+     问总共有多少条不同的路径？
+     */
+    public static int uniquePaths(int m, int n) {
+        if (m <= 0 || n <= 0) {
+            return 0;
+        }
+
+        int[][] dp = new int[m][n];
+
+        // 初始值如下：
+        //dp[0] [0….n-1] = 1; // 相当于最上面一行，机器人只能一直往左走
+        //dp[0…m-1] [0] = 1; // 相当于最左面一列，机器人只能一直往下走
+        for (int i = 0; i < m; i++){
+            dp[i][0] = 1;
+        }
+        for (int i = 0; i < n; i++){
+            dp[0][i] = 1;
+        }
+        // 推导出 dp[m-1][n-1]
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                // 状态转移方程
+                dp[i][j] = dp[i-1][j] + dp[i][j-1];
+            }
+        }
+        return dp[m-1][n-1];
+    }
+
+    /**
+     * 01背包问题：https://mp.weixin.qq.com/s/AMAYrutpuXQyRM178HJeZA
+     */
+
 }
 
 

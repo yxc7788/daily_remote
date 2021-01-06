@@ -18,24 +18,6 @@ public class DiameterOfBinaryTree {
     }
 
 
-    int sum = 0;
-    public int diameterOfBinaryTree(TreeNode root) {
-        hepler(root);
-        return sum;
-    }
-
-    private int hepler(TreeNode root) {
-
-        if (root == null) {
-            return 0;
-        }
-        int l = hepler(root.left);
-        int r = hepler(root.right);
-        sum = Math.max(sum, l + r);
-        return Math.max(l, r) + 1;
-    }
-
-
     /**
      *  code 2
      */

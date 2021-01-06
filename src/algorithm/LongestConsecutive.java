@@ -47,4 +47,27 @@ public class LongestConsecutive {
 
         return longestStreak;
     }
+
+
+    /**
+     * self
+     */
+    public int longestConsecutive2(int[] nums) {
+        HashSet<Integer> set = new HashSet<>();
+        int res = 0;
+        for (int i = 0; i < nums.length; i++) {
+            set.add(nums[i]);
+        }
+
+        for (int i = 0 ; i < nums.length; i++) {
+            int num = nums[i] - 1;
+            int count = 1;
+            while (set.contains(num)) {
+                num -= 1;
+                count ++ ;
+            }
+            res  = Math.max(res, count);
+        }
+        return res;
+    }
 }

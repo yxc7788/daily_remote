@@ -14,10 +14,19 @@ import java.util.Map;
  * 输出: 1
  * 输入: s = "pwwkew"
  * 输出: 3，因为无重复字符的最长子串是 "wke"，所以其长度为 3。
+ *
  * https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/solution/hua-jie-suan-fa-3-wu-zhong-fu-zi-fu-de-zui-chang-z/
  */
+
+
+
 public class LengthOfLongestSubstring {
 
+    /**
+     * 解题思路：滑动窗口
+     * @param s
+     * @return
+     */
     public int lengthOfLongestSubstring(String s) {
         if (s.length() == 0) {
             return 0;

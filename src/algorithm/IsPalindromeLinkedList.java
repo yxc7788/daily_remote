@@ -33,7 +33,7 @@ public class IsPalindromeLinkedList {
 
         fast = head;
         while (slow != null) {
-            //然后比较，判断节点值是否相等
+            //然后比较，判断节点值是否相等，注意这里一定是判断节点的val是否相等
             if (fast.val != slow.val) {
                 return false;
             }
@@ -84,6 +84,29 @@ public class IsPalindromeLinkedList {
                 return false;
             }
             head = head.next;
+        }
+        return true;
+    }
+
+    /**
+     * self 整个链表放入栈中也可以
+     */
+    public boolean isPalindrome3(ListNode head) {
+        Stack<ListNode> stack = new Stack<>();
+        ListNode node = head;
+        int length = 0;
+        while (node != null) {
+            stack.push(node);
+            length ++;
+            node = node.next;
+        }
+        node = head;
+        while (!stack.isEmpty()) {
+            if (node.val == stack.pop().val) {
+                node = node.next;
+            }else {
+                return false;
+            }
         }
         return true;
     }
