@@ -19,6 +19,35 @@ package algorithm;
  */
 public class LengthOfLis {
 
+
+    /**
+     * https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/
+     */
+
+    // [4,10,4,3,8,9]
+
+    public static int lengthOfLIS(int[] nums) {
+        if (nums.length == 0) {
+            return 0;
+        }
+        // 注意 定dp[i] 为考虑前 i个元素，以第 i个数字结尾的最长上升子序列的长度
+        int[] dp = new int[nums.length];
+        dp[0] = 1;
+        int maxans = 1;
+        for (int i = 1; i < nums.length; i++) {
+            dp[i] = 1;
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[i], dp[j] + 1);
+                }
+            }
+            maxans = Math.max(maxans, dp[i]);
+        }
+        return maxans;
+    }
+
+
+
     /**
      * 自己写的方法，没有通过 [4,10,4,3,8,9] 正确3，输出4
      * @param nums
@@ -36,37 +65,13 @@ public class LengthOfLis {
                     dp[i] = Math.max(dp[i], dp[j] + 1);
                 }
                 else {
-                    dp[i] = dp[j];
+                    dp[i] = 1;
                 }
             }
         }
         return dp[nums.length -1];
     }
 
-    /**
-     * https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/
-     */
-
-    // [4,10,4,3,8,9]
-
-    public static int lengthOfLIS(int[] nums) {
-        if (nums.length == 0) {
-            return 0;
-        }
-        int[] dp = new int[nums.length];
-        dp[0] = 1;
-        int maxans = 1;
-        for (int i = 1; i < nums.length; i++) {
-            dp[i] = 1;
-            for (int j = 0; j < i; j++) {
-                if (nums[i] > nums[j]) {
-                    dp[i] = Math.max(dp[i], dp[j] + 1);
-                }
-            }
-            maxans = Math.max(maxans, dp[i]);
-        }
-        return maxans;
-    }
 
     public static void main(String[] args) {
         int [] nums = new int []{4,10,4,3,8,9};

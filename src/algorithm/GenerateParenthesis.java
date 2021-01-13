@@ -68,5 +68,57 @@ public class GenerateParenthesis {
         }
     }
 
+    /**
+     * 简单写法
+     */
+    private List<String> res = new ArrayList<>();
+
+    public List<String> generateParenthesis1(int n) {
+        dfs("", n, 0, 0);
+        return res;
+    }
+
+    public void dfs(String ans, int n, int lc, int rc) {
+        // 剪枝 右边扣号数量大于左边
+        if(rc > lc || lc > n) return;
+        // 满足结果
+        if(lc == n && lc == rc) res.add(ans);
+        // 遍历+递归
+        dfs(ans+'(', n, lc+1, rc);
+        dfs(ans+')', n, lc, rc+1);
+    }
+
+
+    /**
+     * self 哪里不对
+     */
+    public List<String> generateParenthesis2(int n) {
+        int left = n;
+        int right = n;
+        StringBuilder sb = new StringBuilder();
+        List<String> res = new ArrayList<>();
+
+        helper(3, 3, res, sb);
+        return res;
+    }
+    private void helper(int left, int right, List<String> res, StringBuilder sb) {
+        if (left > right) {
+            return;
+        }
+        if (left == 0 && right == 0) {
+            res.add(sb.toString());
+
+        }
+        if (left > 0) {
+            sb.append("(");
+            helper(left - 1, right, res,sb);
+        }
+        if (right > 0) {
+            sb.append(")");
+            helper(left, right - 1, res,sb);
+        }
+        sb.deleteCharAt(sb.length() - 1);
+
+    }
 
 }

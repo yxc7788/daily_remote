@@ -23,7 +23,8 @@ package algorithm;
  * ]
  * 输出: 4
  * 解释: 最长递增路径是 [3, 4, 5, 6]。注意不允许在对角线方向上移动。
- *https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/ju-zhen-zhong-de-zui-chang-di-zeng-lu-jing-by-le-2/
+ * https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/javashi-xian-shen-du-you-xian-chao-ji-jian-dan-yi-/
  */
 public class LongestIncreasingPath {
+    
 }

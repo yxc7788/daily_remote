@@ -124,13 +124,8 @@ public class All {
 
 
     public TreeNode reConstructBinaryTree(int [] pre, int [] in) {
-        if (pre == null || in == null) {
-            return null;
-        }
+
         if (pre.length == 0 || in.length == 0) {
-            return null;
-        }
-        if (pre.length != in.length) {
             return null;
         }
         TreeNode root = new TreeNode(pre[0]);
@@ -2658,7 +2653,7 @@ public class All {
 //57.在一个排序的链表中，存在重复的结点，请删除该链表中重复的结点，重复的结点不保留，返回链表头指针
 // 注意这道题区别于删除后保留重复节点，以及删除链表中指定的节点
 //  思路：先新建一个头节点，然后向后查找值相同的节点，重复查找后删除
-     
+    // 链表1->2->3->3->4->4->5 处理后为 1->2->5
 
     public ListNode deleteDuplication2(ListNode pHead) {
         if (pHead == null || pHead.next == null) {
@@ -2730,6 +2725,38 @@ public class All {
             }
         }
         return head;
+    }
+
+
+
+    /**
+     * @description 26. 删除排序数组中的重复项
+     * 给定一个排序数组，你需要在原地删除重复出现的元素，使得每个元素只出现一次，返回移除后数组的新长度。
+     * 不要使用额外的数组空间，你必须在 原地 修改输入数组 并在使用 O(1) 额外空间的条件下完成。
+     * 示例 1:
+     * 给定数组 nums = [1,1,2],
+     * 函数应该返回新的长度 2, 并且原数组 nums 的前两个元素被修改为 1, 2。
+     * 你不需要考虑数组中超出新长度后面的元素。
+     * 示例 2:
+     * 给定 nums = [0,0,1,1,1,2,2,3,3,4],
+     * 函数应该返回新的长度 5, 并且原数组 nums 的前五个元素被修改为 0, 1, 2, 3, 4。
+     * 你不需要考虑数组中超出新长度后面的元素。。
+     * https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/solution/shuang-zhi-zhen-shan-chu-zhong-fu-xiang-dai-you-hu/
+     */
+    public int removeDuplicates(int[] nums) {
+        if (nums == null || nums.length == 0) {
+            return 0;
+        }
+        int p = 0;
+        int q = 1;
+        while (q < nums.length){
+            if (nums[p] != nums[q]){
+                nums[p + 1] = nums[q];
+                p++;
+            }
+            q++;
+        }
+        return p + 1;
     }
 
 //58.给定一个二叉树和其中的一个结点，请找出中序遍历顺序的下一个结点并且返回。注意，树中的结点不仅

@@ -1,9 +1,6 @@
 package algorithm;
 
-import java.util.Deque;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
 
 import static javax.swing.UIManager.put;
 
@@ -30,6 +27,32 @@ import static javax.swing.UIManager.put;
  */
 public class IsValid {
 
+    /**
+     * self
+     */
+    public boolean isValid(String s) {
+        if (s.length() %2 != 0) {
+            return false;
+        }
+        HashMap<Character, Character> map = new HashMap<>();
+        map.put(')','(');
+        map.put(']','[');
+        map.put('}','{');
+        Stack<Character> stack = new Stack<>();
+        char[] chars = s.toCharArray();
+        for (char c : chars) {
+            if (c == '(' || c == '[' || c == '{') {
+                stack.push(c);
+            }
+            else if (!stack.isEmpty() && map.get(c) == stack.peek()) {
+                stack.pop();
+            }
+            else {
+                return false;
+            }
+        }
+        return stack.isEmpty();
+    }
 
     /**
      * 栈先入后出特点恰好与本题括号排序特点一致，即若遇到左括号入栈，遇到右括号时将对应栈顶左括号出栈，则遍历完所有括号后 stack 仍然为空；
@@ -41,7 +64,7 @@ public class IsValid {
      * @param s
      * @return
      */
-    public boolean isValid(String s) {
+    public boolean isValid1(String s) {
         int n = s.length();
         if (n % 2 == 1) {
             return false;

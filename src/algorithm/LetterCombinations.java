@@ -13,6 +13,52 @@ import java.util.Map;
  * 输出：["ad", "ae", "af", "bd", "be", "bf", "cd", "ce", "cf"].
  */
 public class LetterCombinations {
+
+    /**
+     * self
+     * @param digits
+     * @return
+     */
+    List<String> res = new ArrayList<>();
+    StringBuilder sb = new StringBuilder();
+    HashMap<Character, String> map = new HashMap<>();
+    public List<String> letterCombinations2(String digits) {
+        map.put('2',"abc");
+        map.put('3',"def");
+        map.put('4',"ghi");
+        map.put('5',"jkl");
+        map.put('6',"mno");
+        map.put('7',"pqrs");
+        map.put('8',"tuv");
+        map.put('9',"wxyz");
+
+        char[] ds = digits.toCharArray();
+        if (ds.length == 0) {
+            return res;
+        }
+        helper(0, ds);
+        return res;
+    }
+    private void helper(int index, char[] ds) {
+        if (index == ds.length) {
+            res.add(sb.toString());
+            return;
+        }
+        char[] chars = map.get(ds[index]).toCharArray();
+        for (int i = 0; i < chars.length; i++) {
+            sb.append(chars[i]);
+            helper(index + 1, ds);
+            sb.deleteCharAt(index);
+        }
+        return;
+    }
+
+
+    /**
+     * 这种写法参数比较多
+     * @param digits
+     * @return
+     */
     public List<String> letterCombinations(String digits) {
         List<String> res = new ArrayList<String>();
         if (digits.length() == 0) {

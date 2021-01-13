@@ -135,54 +135,51 @@ public class MutiSort {
     }
 
 
+
+
+
+
+
     /**
-     * 快速排序
+     * @param arr        待排序列
+     * @param leftIndex  待排序列起始位置
+     * @param rightIndex 待排序列结束位置
+     * https://www.cnblogs.com/coderising/p/5708801.html
      */
-    public static void quickSort(int[] arr, int low, int high) {
-        // 如果指针在同一位置(只有一个数据时)，退出
-        if (high - low < 1) {
+    private static void quickSort1(int[] arr, int leftIndex, int rightIndex) {
+        if (leftIndex >= rightIndex) {
             return;
         }
-        // 标记，从高指针开始，还是低指针（默认高指针）
-        boolean flag = true;
-        // 记录指针的其实位置
-        int start = low;
-        int end = high;
-        // 默认中间值为低指针的第一个值
-        int midValue = arr[low];
-        while (true) {
-            // 高指针移动
-            if (flag) {
-                // 如果列表右方的数据大于中间值，则向左移动
-                if (arr[high] > midValue) {
-                    high--;
-                } else if (arr[high] < midValue) {
-                    // 如果小于，则覆盖最开始的低指针值，并且移动低指针，标志位改成从低指针开始移动
-                    arr[low] = arr[high];
-                    low++;
-                    flag = false;
-                }
-            } else {
-                // 如果低指针数据小于中间值，则低指针向右移动
-                if (arr[low] < midValue) {
-                    low++;
-                } else if (arr[low] > midValue) {
-                    // 如果低指针的值大于中间值，则覆盖高指针停留时的数据，并向左移动高指针。切换为高指针移动
-                    arr[high] = arr[low];
-                    high--;
-                    flag = true;
-                }
+
+        int left = leftIndex;
+        int right = rightIndex;
+        //待排序的第一个元素作为基准值
+        int key = arr[left];
+
+        //从左右两边交替扫描，直到left = right
+        while (left < right) {
+            while (right > left && arr[right] >= key) {
+                //从右往左扫描，找到第一个比基准值小的元素
+                right--;
             }
-            // 当两个指针的位置相同时，则找到了中间值的位置，并退出循环
-            if (low == high) {
-                arr[low] = midValue;
-                break;
+
+            //找到这种元素将arr[right]放入arr[left]中
+            arr[left] = arr[right];
+
+            while (left < right && arr[left] <= key) {
+                //从左往右扫描，找到第一个比基准值大的元素
+                left++;
             }
+
+            //找到这种元素将arr[left]放入arr[right]中
+            arr[right] = arr[left];
         }
-        // 然后出现有，中间值左边的小于中间值。右边的大于中间值。
-        // 然后在对左右两边的列表在进行快速排序
-        quickSort(arr, start, low -1);
-        quickSort(arr, low + 1, end);
+        //基准值归位
+        arr[left] = key;
+        //对基准值左边的元素进行递归排序
+        quickSort1(arr, leftIndex, left - 1);
+        //对基准值右边的元素进行递归排序。
+        quickSort1(arr, right + 1, rightIndex);
     }
 
 }

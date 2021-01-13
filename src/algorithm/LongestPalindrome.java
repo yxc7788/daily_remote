@@ -63,7 +63,7 @@ public class LongestPalindrome {
         if (len < 2) {
             return s;
         }
-
+        // 注意maxLen值一定从1开始不能是0
         int maxLen = 1;
         int begin = 0;
 
@@ -94,6 +94,40 @@ public class LongestPalindrome {
             }
         }
         return s.substring(begin, begin + maxLen);
+    }
+
+
+    /**
+     * self
+     */
+    public String longestPalindromex(String s) {
+
+        char[] chars = s.toCharArray();
+        int[][] dp = new int[chars.length][chars.length];
+
+        for (int i = 0; i < chars.length; i++) {
+            dp[i][i] = 1;
+        }
+        int begin = 0;
+        int max = 1;
+        for (int j = 1; j < chars.length; j++) {
+            for (int i = 0 ; i < j; i++) {
+                if (chars[i] == chars[j]) {
+                    if (j - i < 3) {
+                        dp[i][j] = 1;
+                    }
+                    else {
+                        dp[i][j] = dp[i+1][j-1];
+                    }
+                    if (dp[i][j] == 1 && j - i + 1 > max) {
+                        max = j - i + 1;
+                        begin = i;
+                    }
+                }
+            }
+        }
+        return s.substring(begin, begin + max);
+
     }
 
     /**
