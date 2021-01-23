@@ -3,6 +3,7 @@ package algorithm;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 /**
  * @author yangxc27652
@@ -46,6 +47,36 @@ public class PathSum {
         recur(root.left, tar);
         recur(root.right, tar);
         path.removeLast();
+    }
+
+    /**
+     * s2
+     * @param root
+     * @param sum
+     * @return
+     */
+    public List<List<Integer>> pathSum3(TreeNode root, int sum) {
+        List<List<Integer>> res = new ArrayList<>();
+        Stack<Integer> path = new Stack<>();
+        method(root, 0, sum, path, res);
+        return res;
+    }
+    public void method (TreeNode root, int cur, int sum, Stack<Integer> path, List<List<Integer>> res) {
+        if (root == null) {
+            return;
+        }
+
+        path.push(root.val);
+        cur += root.val;
+
+        if (cur == sum && root.left == null && root.right == null) {
+            res.add(new ArrayList(path));
+        }
+        method(root.left, cur, sum, path, res);
+        method(root.right, cur, sum, path, res);
+        path.pop();
+        // 下面这个cur的值回溯没有必要，毕竟不是引用传递，每一层递归有自己的值，当前层改变了，也仅仅改变当前层的cur
+        cur -= root.val;
     }
 
 

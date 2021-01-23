@@ -23,6 +23,19 @@ import java.util.Arrays;
  * https://leetcode-cn.com/problems/coin-change/solution/322-ling-qian-dui-huan-by-leetcode-solution/
  */
 public class OoinChange {
+    /**
+     *  * 输入：coins = [1, 2, 5], amount = 11
+     *  * 输出：3
+     *  * 解释：11 = 5 + 5 + 1
+     *  * 输入：coins = [2], amount = 3
+     *  * 输出：-1
+     *  * 输入：coins = [1], amount = 0
+     *  * 输出：0
+     *  * 输入：coins = [1], amount = 1
+     *  * 输出：1
+     *  * 输入：coins = [1], amount = 2
+     *  * 输出：2
+     */
     public int coinChange1(int[] coins, int amount) {
         int max = amount + 1;
         int[] dp = new int[amount + 1];

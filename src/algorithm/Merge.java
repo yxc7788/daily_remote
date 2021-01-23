@@ -21,6 +21,34 @@ import java.util.List;
  * https://leetcode-cn.com/problems/merge-intervals/solution/chi-jing-ran-yi-yan-miao-dong-by-sweetiee/
  */
 public class Merge {
+
+    /**
+     * s
+     * @param intervals
+     * @return
+     */
+    public int[][] merge0(int[][] intervals) {
+
+        List<int[]> res = new ArrayList<>();
+        Arrays.sort(intervals, (v1, v2) -> v1[0] - v2[0]);
+
+        res.add(intervals[0]);
+        for (int i = 1; i < intervals.length; i++) {
+            if (intervals[i][0] - res.get(res.size() - 1)[1] > 0) {
+                res.add(intervals[i]);
+            }
+            else {
+                res.get(res.size() - 1)[1] = Math.max(intervals[i][1], res.get(res.size() - 1)[1]);
+            }
+        }
+        int len = res.size();
+        int[][] array = new int[len][];
+        for (int i = 0; i < len; i++) {
+            array[i] = res.get(i);
+        }
+        return array;
+    }
+
     public int[][] merge(int[][] intervals) {
 
         // 先按照区间起始位置排序

@@ -112,5 +112,28 @@ public class CanCompleteCircuit {
     }
 
 
+    /**
+     * self2
+     */
+    public int canCompleteCircuit4(int[] gas, int[] cost) {
+        int cur = 0;
+        for (int i = 0; i < gas.length; i++) {
+            if (gas[i] >= cost[i]) {
+                cur = 0;
+                for (int j = i; j < gas.length + i + 1; j++) {
+                    cur = cur + gas[j%gas.length] - cost[j%gas.length];
+                    if (j == gas.length + i && j >= gas.length) {
+                        return i;
+                    }
+                    if (cur < 0) {
+                        break;
+                    }
+                }
+            }
+
+        }
+        return -1;
+    }
+
 
 }

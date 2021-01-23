@@ -69,6 +69,7 @@ public class Candy {
             }
         }
         for (int j = ratings.length -2; j>=0; j--) {
+            // 注意这个判断不能少 res[j] <= res[j+1]，必须小于等于
             if (ratings[j] > ratings[j+1] && res[j] <= res[j+1]) {
                 res[j] = res[j+1] + 1;
             }

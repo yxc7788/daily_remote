@@ -16,6 +16,10 @@ import java.util.Arrays;
  */
 public class ContainsDuplicate {
 
+    /**
+     * 时间复杂度nlogn
+     * 空间 logn
+     */
     public boolean containsDuplicate(int[] nums) {
         Arrays.sort(nums);
         int n = nums.length;

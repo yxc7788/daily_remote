@@ -10,6 +10,25 @@ package algorithm;
  */
 public class RemoveListDuplicates {
 
+    /**
+     * s1
+     */
+    public ListNode deleteDuplicates0(ListNode head) {
+        ListNode p = head;
+        while (p != null && p.next != null) {
+            if (p.val == p.next.val) {
+                p.next = p.next.next;
+            }
+            else {
+                p = p.next;
+            }
+        }
+        return head;
+    }
+
+    /**
+     * s2
+     */
     public ListNode deleteDuplicates(ListNode head) {
         ListNode p = head;
         while (p != null){

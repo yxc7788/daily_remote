@@ -17,6 +17,22 @@ package algorithm;
  * https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/solution/shuang-zhi-zhen-shan-chu-zhong-fu-xiang-dai-you-hu/
  */
 public class RemoveDuplicates {
+
+
+    /**
+     * s
+     */
+    public int removeDuplicates(int[] nums) {
+        int index = 0;
+        for (int i = 0; i < nums.length; i++) {
+            int val = nums[index];
+            if (val != nums[i]) {
+                index = index + 1;
+                nums[index] = nums[i];
+            }
+        }
+        return index + 1;
+    }
     /**
      * 解法： 双指针
      * 首先注意数组是有序的，那么重复的元素一定会相邻。
@@ -28,7 +44,7 @@ public class RemoveDuplicates {
      * 重复上述过程，直到 q 等于数组长度。
      * 返回 p + 1，即为新数组长度。
      */
-    public int removeDuplicates(int[] nums) {
+    public int removeDuplicates2(int[] nums) {
         if (nums == null || nums.length == 0) {
             return 0;
         }

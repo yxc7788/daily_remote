@@ -192,6 +192,7 @@ public class All {
             if (array[mid] > array[high]){
                 low = mid + 1;
             }else if (array[mid] == array[high]){
+                // 重点
                 high = high - 1;
             }else {
                 high = mid;
@@ -408,20 +409,20 @@ public class All {
         int oldIndex=0;
         int evenIndex=0;
         int[] newArray=new int[array.length];
-        for(int i=0;i<array.length;i++){
-            if(array[i]%2!=0){
+        for (int i=0;i<array.length;i++){
+            if (array[i]%2!=0){
                 newArray[oldIndex]=array[i];
                 oldIndex++;
             }
         }
         evenIndex=oldIndex;
-        for(int j=0;j<array.length;j++){
-            if(array[j]%2==0){
+        for (int j=0;j<array.length;j++){
+            if (array[j]%2==0){
                 newArray[evenIndex]=array[j];
                 evenIndex++;
             }
         }
-        for(int i=0;i<array.length;i++){
+        for (int i=0;i<array.length;i++){
             array[i]=newArray[i];
         }
     }
@@ -2743,7 +2744,23 @@ public class All {
      * 你不需要考虑数组中超出新长度后面的元素。。
      * https://leetcode-cn.com/problems/remove-duplicates-from-sorted-array/solution/shuang-zhi-zhen-shan-chu-zhong-fu-xiang-dai-you-hu/
      */
+
+    /**
+     * s
+     */
     public int removeDuplicates(int[] nums) {
+        int index = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            int val = nums[index];
+            if (val != nums[i]) {
+                index = index + 1;
+                nums[index] = nums[i];
+            }
+        }
+        return index + 1;
+    }
+    public int removeDuplicates2(int[] nums) {
         if (nums == null || nums.length == 0) {
             return 0;
         }
@@ -2834,7 +2851,7 @@ public class All {
         //根节点入栈
         stack1.push(root);
 
-        //每次循环中，都是一个栈为空，一个栈不为空，结束的条件两个都为空
+        //注意这里是或，每次循环中，都是一个栈为空，一个栈不为空，结束的条件两个都为空
         while (!stack1.isEmpty() || !stack2.isEmpty()) {
             List<Integer> subList = new ArrayList<>(); // 存储这一个层的数据
             TreeNode cur = null;

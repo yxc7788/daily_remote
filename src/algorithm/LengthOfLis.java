@@ -1,5 +1,7 @@
 package algorithm;
 
+import java.util.Arrays;
+
 /**
  * @author yangxc27652
  * @date 2020/12/20
@@ -23,6 +25,21 @@ public class LengthOfLis {
     /**
      * https://leetcode-cn.com/problems/longest-increasing-subsequence/solution/zui-chang-shang-sheng-zi-xu-lie-by-leetcode-soluti/
      */
+
+    public int lengthOfLIS0(int[] nums) {
+        int[] dp = new int[nums.length];
+        int res = 1;
+        Arrays.fill(dp, 1);
+        for (int i = 1; i < nums.length; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j]) {
+                    dp[i] = Math.max(dp[j] + 1, dp[i] );
+                    res = Math.max(res, dp[i]);
+                }
+            }
+        }
+        return res;
+    }
 
     // [4,10,4,3,8,9]
 

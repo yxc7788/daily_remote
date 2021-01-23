@@ -87,6 +87,7 @@ public class LongestPalindrome {
                 }
 
                 // 只要 dp[i][j] == true 成立，就表示子串 s[i..j] 是回文，此时记录回文长度和起始位置
+                // 注意这个地方不能写成  max = Math.max(max, j - i + 1)这样，因为这里要记录最大max时候的begin
                 if (dp[i][j] && j - i + 1 > maxLen) {
                     maxLen = j - i + 1;
                     begin = i;

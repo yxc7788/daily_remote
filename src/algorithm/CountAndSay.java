@@ -70,7 +70,6 @@ public class CountAndSay {
                 }
                 else {
                     sb.append(last - pre + 1).append(chars[j]);
-
                     last = j + 1;
                     pre = j + 1;
                 }

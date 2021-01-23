@@ -17,6 +17,40 @@ import java.util.Arrays;
  */
 public class MergeTwoArrays {
     /**
+     * s
+     */
+    public void merge0(int[] nums1, int m, int[] nums2, int n) {
+        if (n == 0) {
+            return;
+        }
+        int index = nums1.length - 1;
+        int p1  =  nums1.length - nums2.length - 1;
+        int p2 = nums2.length - 1;
+        while (p1 >= 0 && p2 >= 0) {
+
+            if (nums1[p1] <= nums2[p2]) {
+                nums1[index--] = nums2[p2--];
+            }
+            else {
+                nums1[index--] = nums1[p1--];
+            }
+        }
+
+        if (p2 == -1) {
+            while (p1 >= 0) {
+                nums1[index--] = nums1[p1--];
+            }
+        }
+        if (p1 == -1) {
+            while (p2 >= 0) {
+                nums1[index--] = nums2[p2--];
+            }
+        }
+
+        return ;
+    }
+
+    /**
      *  双指针 / 从后往前
      */
     public void merge(int[] nums1, int m, int[] nums2, int n) {
