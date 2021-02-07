@@ -24,8 +24,21 @@ public class ThreadPoolTest {
 
         ThreadCallTask call = new ThreadCallTask();
         Future<String> futureTask =  service.submit(call);
-        String a = futureTask.get();
-        System.out.println(a);
+
+        try {
+
+            Thread.sleep(90);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        try {
+            String a = futureTask.get();
+            System.out.println(a);
+        } catch (Exception e) {
+            System.out.println("捕获futureTask中的异常, 内容是 " + e.getMessage());
+        }
+
+
 
 
 
@@ -63,7 +76,9 @@ class ThreadTask implements Runnable{
         try {
             System.out.println("当前线程:" + Thread.currentThread().getName() + "正在执行第"+ i +"个任务");
             Thread.sleep(3000);
+
             System.out.println("当前线程:" + Thread.currentThread().getName() + "已经完成第"+ i +"个任务");
+
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -81,6 +96,7 @@ class ThreadCallTask implements Callable{
         try {
             System.out.println("Callable的任务正在执行,线程为：" + Thread.currentThread().getName());
             Thread.sleep(3000);
+            throw new RuntimeException("抛出一个异常");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

@@ -43,7 +43,7 @@ public class Subsets {
     }
 
     /**
-     * 方法2
+     * 方法2  nums = [1,2,3]
      */
     List<Integer> t1 = new ArrayList<Integer>();
     List<List<Integer>> ans1 = new ArrayList<List<Integer>>();

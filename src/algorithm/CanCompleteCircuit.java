@@ -27,6 +27,24 @@ public class CanCompleteCircuit {
      * 时间复杂度：O(N)O(N)，其中 NN 为数组的长度。我们对数组进行了单次遍历。
      * 空间复杂度：O(1)O(1)。
      */
+    public int canCompleteCircuit0(int[] gas, int[] cost) {
+        for (int i = 0; i < gas.length; i++) {
+            if (gas[i] >= cost[i]) {
+                int cur = gas[i];
+                int j = i;
+                while (cur >= cost[j%gas.length]) {
+                    cur = cur + gas[(j + 1)%gas.length] - cost[j%gas.length];
+                    j++;
+                    if (j == i + gas.length) {
+                        return j % gas.length;
+                    }
+                }
+            }
+        }
+        return  -1;
+    }
+
+
     public int canCompleteCircuit(int[] gas, int[] cost) {
         int n = gas.length;
         int i = 0;

@@ -447,25 +447,26 @@ public class All {
         }
     }
 
+
     
 //15.输入一个链表，输出该链表中倒数第k个结点。
 //    扩展题：找中间节点，使用两个指针，一个走一步，一个走两步。找到中间节点
 //    思路：定义一快一慢两个指针，快指针走K步，然后慢指针开始走，快指针到尾时，慢指针就找到了倒数第K个
 //    节点。 快指针要先走k-1步
 
-    public ListNode FindKthToTail(ListNode head,int k) {
+    public ListNode findKthToTail(ListNode head, int k) {
         ListNode first=head;
         ListNode second=head;
-        if(head==null||k<=0){
+        if (head==null||k<=0){
             return null;
         }
-        for(int i=0;i<k;i++){
-            if(second.next==null){
+        for (int i=1;i<k;i++){
+            if (second.next==null){
                 return null;
             }
             second=second.next;
         }
-        while(second.next!=null){
+        while (second.next!=null){
             first=first.next;
             second=second.next;
         }
@@ -477,7 +478,7 @@ public class All {
 //    扩展题：输出反转后链表的头节点，定义三个指针反向输出。
 //    思路：定义两个指针，反向输出
 
-    public ListNode ReverseList(ListNode head) {
+    public ListNode reverseList(ListNode head) {
         ListNode pre=null;
         ListNode next=null;
         while (head!=null){
@@ -493,7 +494,7 @@ public class All {
 //17.输入两个单调递增的链表，输出两个链表合成后的链表，当然我们需要合成后的链表满足单调不减规则。
 //    思路：递归与非递归求解，小数放在前面。
 
-    public ListNode Merge(ListNode list1,ListNode list2) {
+    public ListNode merge(ListNode list1, ListNode list2) {
         if (list1 == null) {
             return list2;
         } 
@@ -503,69 +504,85 @@ public class All {
         ListNode newHead = null;
         if (list1.val <= list2.val) {
             newHead = list1;
-            newHead.next = Merge(list1.next,list2);
+            newHead.next = merge(list1.next,list2);
         }else {
             newHead = list2;
-            newHead.next = Merge(list1,list2.next);
+            newHead.next = merge(list1,list2.next);
         } 
         return newHead;
     }
 
-    /**
-     * 方法2
-     * @param list1
-     * @param list2
-     * @return
-     */
-    public ListNode merge(ListNode list1,ListNode list2) {
 
-        ListNode newListNode=null; //不能放在类中，只能在方法中
-        ListNode current=null;
-        if (list1==null){
-            return list2;
+    /**
+     * method2
+     */
+    public ListNode mergeTwoLists(ListNode a, ListNode b) {
+        if (a == null || b == null) {
+            return a != null ? a : b;
         }
-        if (list2==null){
-            return list1;
-        }
-        while (list1!=null&&list2!=null){
-            if (list1.val<list2.val){
-                if (newListNode==null){
-                    newListNode=current=list1;
-                }else {
-                    current.next=list1;
-                    current=current.next;
-                }
-                list1=list1.next;
-            } else{
-                if (newListNode==null){
-                    newListNode=current=list2;
-                }else {
-                    current.next=list2;
-                    current=current.next;
-                }
-                list2=list2.next;
+        ListNode head = new ListNode(0);
+        ListNode tail = head, aPtr = a, bPtr = b;
+        while (aPtr != null && bPtr != null) {
+            if (aPtr.val < bPtr.val) {
+                tail.next = aPtr;
+                aPtr = aPtr.next;
+            } else {
+                tail.next = bPtr;
+                bPtr = bPtr.next;
             }
+            tail = tail.next;
         }
-        if (list1==null){
-            current.next=list2;
-        }else{
-            current.next=list1;
-        }
-        return newListNode;
+        tail.next = (aPtr != null ? aPtr : bPtr);
+        return head.next;
     }
+
+
     
 //18.输入两棵二叉树A，B，判断B是不是A的子结构。（ps：我们约定空树不是任意一个树的子结构）
 //    思路：若根节点相等，利用递归比较他们的子树是否相等，若根节点不相等，则利用递归分别在左右子树中查
 //    找。
 
-    public boolean HasSubtree(TreeNode root1,TreeNode root2) {
+    /**
+     * s
+     */
+    public boolean isSubStructure(TreeNode A, TreeNode B) {
+        if (B!= null && A != null) {
+
+            if ( A.val == B.val && isSame(A, B)) {
+                return true;
+            }
+            else {
+                return isSubStructure(A.left, B) || isSubStructure(A.right, B);
+            }
+        }
+        return false;
+
+    }
+    private boolean isSame(TreeNode A, TreeNode B) {
+        if (B == null) {
+            return true;
+        }
+        if (A == null) {
+            return false;
+        }
+        if (A.val == B.val) {
+            return isSame(A.left, B.left) && isSame(A.right, B.right);
+        }
+        else {
+            return false;
+        }
+
+    }
+
+    public boolean hasSubtree(TreeNode root1, TreeNode root2) {
         boolean result = false;
         if (root2 != null && root1 != null) {
-            if(root1.val == root2.val){
+            if (root1.val == root2.val){
                 result = doesTree1HaveTree2(root1,root2);
             } 
-            if (!result)
-            return HasSubtree(root1.left,root2) || HasSubtree(root1.right,root2);
+            if (!result) {
+                return hasSubtree(root1.left,root2) || hasSubtree(root1.right,root2);
+            }
         } return result;
     } 
     public boolean doesTree1HaveTree2(TreeNode node1, TreeNode node2) {
@@ -588,7 +605,7 @@ public class All {
 
 
     public void mirror1(TreeNode root) {
-        if(root == null){
+        if (root == null){
             return;
         }
         TreeNode temp = root.left;
@@ -1807,7 +1824,7 @@ public class All {
      * 方法2
      */
     public int getNumberOfK3(int [] array , int k) {
-        if(array == null && array.length == 0) {
+        if (array == null && array.length == 0) {
             return 0;
         }
 
@@ -1815,14 +1832,16 @@ public class All {
     }
     int btSearch(int [] array, double k){
         int low = 0; int high = array.length -1;
-        while(low<=high){
+        while (low<=high){
             //计算mid位置要放在循环里面
             int mid = low + (high-low)/2;
-            if(array[mid] < k){
+            if (array[mid] < k){
                 low = mid +1;
-            }else if(array[mid] > k){
+            }
+            else if (array[mid] > k){
                 high = mid-1;
-            }else{
+            }
+            else{
                 return low;
             }
         }
@@ -1875,29 +1894,23 @@ public class All {
      * https://www.nowcoder.com/questionTerminal/8b3b95850edb4115918ecebdf1b4d222
      * @return
      */
-    public boolean IsBalanced_Solution2(TreeNode root) {
-        if (root == null) {
-            return true;
-        }
-        return isBalance(root);
-
-    }
-    public boolean isBalance(TreeNode root) {
+    public boolean isBalanced(TreeNode root) {
 
         if (root == null) {
             return true;
         }
-        if(Math.abs(getDepth(root.left) - getDepth(root.right)) >1) {
+        if (Math.abs(depth(root.left) - depth(root.right)) <= 1) {
+            return  isBalanced (root.left) && isBalanced(root.right);
+        }
+        else {
             return false;
         }
-        return isBalance(root.left)&& isBalance(root.right);
-
     }
-    public int getDepth2(TreeNode root) {
+    public int depth (TreeNode root) {
         if (root == null) {
             return 0;
         }
-        return Math.max(getDepth(root.left),getDepth(root.right))+1 ;
+        return Math.max(depth(root.left), depth(root.right)) + 1;
     }
 
     /**
@@ -2940,8 +2953,9 @@ public class All {
      
     public ArrayList<ArrayList<Integer>> Print2(TreeNode pRoot) {
         ArrayList<ArrayList<Integer>> res = new ArrayList<>();
-        if (pRoot == null)
+        if (pRoot == null) {
             return res;
+        }
         LinkedList<TreeNode> queue = new LinkedList<>();
         queue.add(pRoot);
         ArrayList<Integer> list = new ArrayList<>();
@@ -2965,6 +2979,39 @@ public class All {
         } return res;
     }
 
+    /**
+     * 从上到下打印出二叉树的每个节点，同一层的节点按照从左到右的顺序打印。
+     * 例如:
+     * 给定二叉树: [3,9,20,null,null,15,7],
+     *     3
+     *    / \
+     *   9  20
+     *     /  \
+     *    15   7
+     *
+     * [3,9,20,15,7]
+     */
+    public int[] levelOrder(TreeNode root) {
+        if(root == null) return new int[0];
+        LinkedList<TreeNode> queue = new LinkedList<>();
+        ArrayList<Integer> res = new ArrayList<>();
+        queue.add(root);
+        while (!queue.isEmpty()) {
+            TreeNode node = queue.poll();
+            res.add(node.val);
+            if (node.left != null) {
+                queue.offer(node.left);
+            }
+            if (node.right != null) {
+                queue.offer(node.right);
+            }
+        }
+        int[] array = new int[res.size()];
+        for (int i=0; i < array.length; i++) {
+            array[i] = res.get(i);
+        }
+        return array;
+    }
 
 // 62.请实现两个函数，分别用来序列化和反序列化二叉树，二叉树的序列化是指：
 // 把一棵二叉树按照某种遍历方式的结果以某种格式保存为字符串，从而使得内存中建立起来的二叉树可以持久保存。

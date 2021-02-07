@@ -23,7 +23,8 @@ import java.util.Comparator;
  * 输出："10"
  * https://leetcode-cn.com/problems/largest-number/solution/zui-da-shu-by-leetcode/
  */
-public class LargestNumber {
+public class
+LargestNumber {
 
 
     /**

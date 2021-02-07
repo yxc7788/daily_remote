@@ -11,6 +11,7 @@ package algorithm;
  * 输入：strs = ["dog","racecar","car"]
  * 输出：""
  * 解释：输入不存在公共前缀。
+ * https://leetcode-cn.com/problems/longest-common-prefix/
  */
 public class LongestCommonPrefix {
     /**
