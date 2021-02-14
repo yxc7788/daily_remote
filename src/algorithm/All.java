@@ -874,6 +874,7 @@ public class All {
         }
         path.push(root.val);
         target = target -root.val;
+        // 注意这里必须减完了才能判断
         if (target == 0 && root.left == null && root.right == null){
             paths.add(new ArrayList<Integer>(path));
         }

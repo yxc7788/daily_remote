@@ -26,5 +26,39 @@ package algorithm;
  * https://leetcode-cn.com/problems/longest-increasing-path-in-a-matrix/solution/javashi-xian-shen-du-you-xian-chao-ji-jian-dan-yi-/
  */
 public class LongestIncreasingPath {
-    
+
+    /**
+     * self 基本用例过了，但是有一个特殊的用例超时
+     */
+    int res = 1;
+    public int longestIncreasingPath(int[][] matrix) {
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int[][] flag = new int[row][col];
+        for (int i = 0 ; i < matrix.length; i++) {
+            for (int j = 0 ; j < matrix[0].length; j++) {
+                helper(row,col,i,j,flag,Integer.MIN_VALUE,0,matrix);
+            }
+        }
+        return res;
+    }
+    public void helper (int row, int col, int i, int j , int[][] flag, int pre, int index, int[][] matrix) {
+
+        if (i < 0 || i >= row || j < 0 || j >= col || flag[i][j] == 1) {
+            return;
+        }
+        if (matrix[i][j] > pre) {
+            flag[i][j] = 1;
+            index = index + 1;
+            res = Math.max(index, res);
+            pre = matrix[i][j];
+            helper(row, col, i + 1, j, flag, pre, index, matrix);
+            helper(row, col, i - 1, j, flag, pre, index, matrix);
+            helper(row, col, i, j + 1, flag, pre, index, matrix);
+            helper(row, col, i, j - 1, flag, pre, index, matrix);
+            flag[i][j] = 0;
+        }
+        return;
+
+    }
 }

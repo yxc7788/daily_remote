@@ -42,7 +42,7 @@ public class IsValidBst {
      * s
      */
     List<Integer> res = new ArrayList<>();
-    public boolean isValidBST(TreeNode root) {
+    public boolean isValidBST3(TreeNode root) {
         if (root==null) {
             return true;
         }
@@ -67,7 +67,7 @@ public class IsValidBst {
     /**
      * method2
      */
-    long pre = Long.MIN_VALUE;
+    long pre1 = Long.MIN_VALUE;
     public boolean isValidBST2(TreeNode root) {
         if (root == null) {
             return true;
@@ -80,7 +80,7 @@ public class IsValidBst {
         if (root.val <= pre) {
             return false;
         }
-        pre = root.val;
+        pre1 = root.val;
         // 访问右子树
         return isValidBST(root.right);
     }
@@ -90,7 +90,7 @@ public class IsValidBst {
      * @param root
      * @return
      */
-    public boolean isValidBST3(TreeNode root) {
+    public boolean isValidBST4(TreeNode root) {
         Deque<TreeNode> stack = new LinkedList<TreeNode>();
         double inorder = -Double.MAX_VALUE;
 

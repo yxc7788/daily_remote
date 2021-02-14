@@ -16,27 +16,27 @@ public class ThreadPoolTest {
         ExecutorService service = new ThreadPoolExecutor(5,10,30,TimeUnit.SECONDS,queue);
 
         // 提交callable类型任务
-//        ThreadCallTask call = new ThreadCallTask();
-//        FutureTask<String> futureTask = new FutureTask(call);
-//        service.submit(futureTask);
-//        String a = futureTask.get();
-//        System.out.println(a);
-
         ThreadCallTask call = new ThreadCallTask();
-        Future<String> futureTask =  service.submit(call);
+        FutureTask<String> futureTask = new FutureTask(call);
+        service.submit(futureTask);
+        String a = futureTask.get();
+        System.out.println(a);
 
-        try {
+//        ThreadCallTask call = new ThreadCallTask();
+//        Future<String> futureTask =  service.submit(call);
 
-            Thread.sleep(90);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        try {
-            String a = futureTask.get();
-            System.out.println(a);
-        } catch (Exception e) {
-            System.out.println("捕获futureTask中的异常, 内容是 " + e.getMessage());
-        }
+//        try {
+//
+//            Thread.sleep(90);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
+//        try {
+//            String a = futureTask.get();
+//            System.out.println(a);
+//        } catch (Exception e) {
+//            System.out.println("捕获futureTask中的异常, 内容是 " + e.getMessage());
+//        }
 
 
 
@@ -96,12 +96,12 @@ class ThreadCallTask implements Callable{
         try {
             System.out.println("Callable的任务正在执行,线程为：" + Thread.currentThread().getName());
             Thread.sleep(3000);
-            throw new RuntimeException("抛出一个异常");
+            //throw new RuntimeException("抛出一个异常");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         // 就返回当前线程名字吧
-        return Thread.currentThread().getName();
+        return Thread.currentThread().getName() + "222";
     }
 }
 

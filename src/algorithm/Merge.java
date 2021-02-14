@@ -27,6 +27,37 @@ public class Merge {
      * @param intervals
      * @return
      */
+    public int[][] merge4(int[][] intervals) {
+        ArrayList<int []> res = new ArrayList<>();
+        Arrays.sort(intervals, new Comparator<int[]>(){
+            @Override
+            public int compare(int[] o1, int[] o2) {
+                return o1[0] - (o2[0]);
+            }
+        });
+
+        int[] merge = intervals[0];
+        res.add(merge);
+        for (int i = 0; i < intervals.length; i++) {
+            if (intervals[i][0] <= res.get(res.size() - 1)[1]) {
+                res.get(res.size() - 1)[1] = Math.max(intervals[i][1], res.get(res.size() - 1)[1]);
+            }
+            else {
+                res.add(intervals[i]);
+            }
+        }
+
+        int[][] array = new int[res.size()][2];
+        for (int i = 0 ; i < res.size(); i++) {
+            array[i] = res.get(i);
+        }
+        return array;
+    }
+    /**
+     * s
+     * @param intervals
+     * @return
+     */
     public int[][] merge0(int[][] intervals) {
 
         List<int[]> res = new ArrayList<>();

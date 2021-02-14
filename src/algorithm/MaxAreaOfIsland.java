@@ -7,6 +7,16 @@ package algorithm;
  * https://leetcode-cn.com/problems/number-of-islands/solution/dao-yu-lei-wen-ti-de-tong-yong-jie-fa-dfs-bian-li-/
  */
 public class MaxAreaOfIsland {
+
+
+
+    /**
+     * method2 这个是岛屿最大面积
+     * @param grid
+     * @return
+     */
+
+
     public int maxAreaOfIsland(int[][] grid) {
         int res = 0;
         for (int r = 0; r < grid.length; r++) {
@@ -39,6 +49,39 @@ public class MaxAreaOfIsland {
     boolean inArea(int[][] grid, int r, int c) {
         return 0 <= r && r < grid.length
                 && 0 <= c && c < grid[0].length;
+    }
+
+
+
+    /**
+     * 这个是岛屿个数
+     * @param grid
+     * @return
+     */
+    public int numIslands(char[][] grid) {
+        int rows = grid.length;
+        int cols = grid[0].length;
+
+        int res = 0;
+        for (int i = 0; i < rows; i++ ){
+            for (int j = 0; j < cols; j++ ) {
+                res += helper(rows, cols, i, j, grid);
+            }
+        }
+        return res;
+    }
+    private int helper(int rows, int cols, int i, int j, char[][] grid) {
+
+        if (i < 0 || i >= rows || j < 0 || j >= cols || grid[i][j] == '0') {
+            return 0;
+        }
+
+        grid[i][j] = '0';
+        helper(rows, cols, i-1, j,grid);
+        helper(rows, cols, i+1, j,grid);
+        helper(rows, cols, i, j-1,grid);
+        helper(rows, cols, i, j+1,grid);
+        return 1;
     }
 
 

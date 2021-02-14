@@ -12,6 +12,7 @@ package algorithm;
  * 输出: 0
  * 解释: 结果不能为 2, 因为 [-2,-1] 不是子数组。
  * https://leetcode-cn.com/problems/maximum-product-subarray/solution/hua-jie-suan-fa-152-cheng-ji-zui-da-zi-xu-lie-by-g/
+ *
  */
 public class MaxProduct {
 
