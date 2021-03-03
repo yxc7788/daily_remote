@@ -32,7 +32,7 @@ public class IsValidBst {
         }
         pre = root.val;
 
-        if(!isValidBST(root.right)) {
+        if (!isValidBST(root.right)) {
             return false;
         }
         return true;

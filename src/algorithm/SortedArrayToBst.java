@@ -17,9 +17,9 @@ package algorithm;
  */
 public class SortedArrayToBst {
     /**
-     * 时间复杂度：O(n)O(n)，其中 nn 是数组的长度。每个数字只访问一次。
-     * 空间复杂度：O(\log n)O(logn)，其中 nn 是数组的长度。空间复杂度不考虑返回值，
-     * 因此空间复杂度主要取决于递归栈的深度，递归栈的深度是 O(\log n)O(logn)。
+     * 时间复杂度：O(n)，其中 n 是数组的长度。每个数字只访问一次。
+     * 空间复杂度：O(logn)，其中 n 是数组的长度。空间复杂度不考虑返回值，
+     * 因此空间复杂度主要取决于递归栈的深度，递归栈的深度是 O(logn)。
      */
     public TreeNode sortedArrayToBST(int[] nums) {
         return helper(nums, 0, nums.length - 1);

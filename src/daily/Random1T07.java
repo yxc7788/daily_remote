@@ -30,7 +30,7 @@ public class Random1T07 {
 
     public static void main(String[] args) {
         int [] count = new int [8];
-        for (int i = 0; i<1000000; i ++) {
+        for (int i = 0; i< 1000000; i ++) {
             count[rand7()] ++ ;
         }
         for (int j : count) {

@@ -49,13 +49,10 @@ public class Permute {
             if (!used[i]) {
                 path.push(nums[i]);
                 used[i] = true;
-
-                System.out.println("  递归之前 => " + path);
                 dfs(nums, len, depth + 1, path, used, res);
-
                 used[i] = false;
                 path.pop();
-                System.out.println("递归之后 => " + path);
+
             }
         }
 

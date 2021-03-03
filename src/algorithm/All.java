@@ -195,6 +195,7 @@ public class All {
                 // 重点
                 high = high - 1;
             }else {
+                // 注意这里不能 -1
                 high = mid;
             }
         }
@@ -222,6 +223,19 @@ public class All {
             pre1 = temp;
         }
         return temp;
+    }
+
+    /**
+     * s2
+     */
+    public int Fibonacci(int n) {
+        if (n == 0) {
+            return 0;
+        }
+        if (n == 1) {
+            return 1;
+        }
+        return Fibonacci(n-1) + Fibonacci(n-2);
     }
 
     /**
@@ -426,6 +440,7 @@ public class All {
             array[i]=newArray[i];
         }
     }
+
 
 
     /**
@@ -699,50 +714,7 @@ public class All {
         return list;
     }
 
-    /**
-     * 第二种写法
-     */
-    public ArrayList<Integer> printMatrix2(int [][] matrix) {
-        ArrayList<Integer> list = new ArrayList<Integer>();
-        if (matrix ==null || matrix.length == 0 || matrix[0].length == 0) {
-            return list;
-        }
-        int up = 0;
-        int down = matrix.length-1;
-        int left = 0;
-        int right = matrix[0].length-1;
 
-        while (true) {
-            for (int col = left; col <= right; col++) {
-                list.add(matrix[up][col]);
-            }
-            up ++;
-            if (up > down) {
-                return list;
-            }
-            for (int row = up; row <= down; row++) {
-                list.add(matrix[row][right]);
-            }
-            right --;
-            if (right < left) {
-                return list;
-            }
-            for (int col = right; col>=left; col--) {
-                list.add(matrix[down][col]);
-            }
-            down --;
-            if (down < up) {
-                return list;
-            }
-            for (int row = down; row>=up; row--) {
-                list.add(matrix[row][left]);
-            }
-            left ++;
-            if (left > right) {
-                return list;
-            }
-        }
-    }
 
 //21.定义栈的数据结构，请在该类型中实现一个能够得到栈最小元素的min函数。
 //    思路：定义两个栈，一个存放入的值。另一个存最小值。
@@ -2189,10 +2161,15 @@ public class All {
         }
     }
 
-
+    /**
+     * s
+     * @param numbers
+     * @return
+     */
     public boolean isContinuous1(int [] numbers) {
-        if (numbers == null || numbers.length == 0)
+        if (numbers == null || numbers.length == 0) {
             return false;
+        }
         int count = 0;
         int diff = 0;
         Arrays.sort(numbers);
@@ -2669,6 +2646,7 @@ public class All {
 // 注意这道题区别于删除后保留重复节点，以及删除链表中指定的节点
 //  思路：先新建一个头节点，然后向后查找值相同的节点，重复查找后删除
     // 链表1->2->3->3->4->4->5 处理后为 1->2->5
+    // https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list-ii/
 
     public ListNode deleteDuplication2(ListNode pHead) {
         if (pHead == null || pHead.next == null) {
@@ -2727,7 +2705,24 @@ public class All {
 //  上面的题要区别下面的题：删除链表中的重复元素
 //  输入: 1->1->2->3->3
 //  输出: 1->2->3
+// https://leetcode-cn.com/problems/remove-duplicates-from-sorted-list/submissions/
+    /**
+     * s
+     */
+    public ListNode deleteDuplicates0(ListNode head) {
+        ListNode dummy = new ListNode(0);
+        dummy.next = head;
 
+        while (head != null && head.next != null) {
+            if (head.next.val == head.val) {
+                head.next = head.next.next;
+            }
+            else {
+                head = head.next;
+            }
+        }
+        return dummy.next;
+    }
 
     public ListNode deleteDuplicates(ListNode head) {
         ListNode p = head;
@@ -2827,18 +2822,22 @@ public class All {
 //    且左右子树节点的值相等，则是对称的。
      
     public boolean isSymmetrical(TreeNode pRoot){
-        if (pRoot == null)
+        if (pRoot == null) {
             return true;
+        }
         return isCommon(pRoot.left, pRoot.right);
     }
 
     public boolean isCommon(TreeNode leftNode, TreeNode rightNode) {
-        if (leftNode == null && rightNode == null)
-        return true;
-        if (leftNode != null && rightNode != null)
+        if (leftNode == null && rightNode == null) {
+            return true;
+        }
+        if (leftNode != null && rightNode != null) {
             return leftNode.val == rightNode.val &&
                     isCommon(leftNode.left,rightNode.right) &&
                     isCommon(leftNode.right,rightNode.left);
+        }
+
         return false;
     }
 
@@ -3328,6 +3327,40 @@ public class All {
             cur = nxt;
         }
         // 返回反转后的头结点
+        return pre;
+    }
+
+
+    /**
+     * self
+     */
+    public ListNode reverseKGroup1(ListNode head, int k) {
+        if (head == null) {
+            return null;
+        }
+        ListNode a = head;
+        ListNode b = head;
+
+        for (int i = 0; i < k; i++) {
+            if (b == null) {
+                return a;
+            }
+            b = b.next;
+        }
+        ListNode newHead = reserse5(a, b);
+        a.next = reverseKGroup1(b, k);
+        return newHead;
+    }
+    public ListNode reserse5 (ListNode a, ListNode b) {
+        ListNode tmp = null;
+        ListNode pre = null;
+        ListNode cur = a;
+        while (cur != b) {
+            tmp = cur.next;
+            cur.next = pre;
+            pre = cur;
+            cur = tmp;
+        }
         return pre;
     }
 

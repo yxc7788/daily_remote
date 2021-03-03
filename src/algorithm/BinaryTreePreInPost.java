@@ -17,7 +17,7 @@ public class BinaryTreePreInPost {
 
 
     public void preorder(TreeNode root) {
-        Stack<TreeNode>    stack=new Stack<>();
+        Stack<TreeNode> stack=new Stack<>();
         while (root!=null||!stack.isEmpty()) {
             //当前节点不为空，则入栈，确保最后遍历到的节点没有左子节点
             //因为是前序遍历，所以再遍历到每个节点的时候，都可以先访问，再寻找其左右子节点。

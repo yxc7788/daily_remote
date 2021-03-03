@@ -20,6 +20,8 @@ public class MaxSubArray {
         }
         return maxAns;
     }
+
+
     public int maxSubArray1(int[] nums) {
         int ans = nums[0];
         int sum = 0;

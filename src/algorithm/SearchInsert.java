@@ -14,8 +14,31 @@ package algorithm;
  * 输出: 4
  * 输入: [1,3,5,6], 0
  * 输出: 0
+ * https://leetcode-cn.com/problems/search-insert-position/solution/sou-suo-cha-ru-wei-zhi-by-leetcode-solution/
  */
 public class SearchInsert {
+
+    /**
+     * 2
+     * 和二分法大体一致，只是返回值为left （二分法返回值是 -1）
+     */
+    public int searchInsert1(int[] nums, int target) {
+        int left = 0, right = nums.length - 1;
+        while (left <= right) {
+            int mid = (left + right) / 2;
+            if (nums[mid] == target) {
+                return mid;
+            } else if (nums[mid] < target) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        // 和二分查找的区别就是这个返回值不同。
+        return left;
+    }
+
+
 
     public int searchInsert(int[] nums, int target) {
         int n = nums.length;

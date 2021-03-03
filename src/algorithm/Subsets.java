@@ -30,6 +30,7 @@ public class Subsets {
      */
     public List<List<Integer>> subsets1(int[] nums) {
         List<List<Integer>> result = new ArrayList<>();
+        result.add(new ArrayList<Integer>());
         for (int num : nums){
             List<List<Integer>> newSubsets = new ArrayList<>();
             for (List<Integer> subset :  result) {
