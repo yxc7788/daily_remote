@@ -46,5 +46,10 @@ public class ScannerTest {
             System.out.println("输出数字" + a);
 
 
+            // 声明一个数组的方法
+            int[] aa = new int[] {1,2};
+            int[] bb = {1,2};
+
+
     }
 }

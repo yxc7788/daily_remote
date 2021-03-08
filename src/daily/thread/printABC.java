@@ -23,6 +23,8 @@ public class printABC {
     }
 
     public static void main(String[] args) {
+
+
         printABC print = new printABC(10);
         new Thread(() -> {
             print.printLetter("A", 0, c1, c2);

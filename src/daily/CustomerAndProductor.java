@@ -64,6 +64,7 @@ public class CustomerAndProductor {
 
     public static void main(String[] args) {
         test0();
+        
 
     }
 }
