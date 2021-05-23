@@ -26,7 +26,7 @@ public class Test {
         // 这是一条测试记录
         System.out.println("-----------------");
 
-
+        // test 做了一些更改
         String filename = "C:\\OFD_25_225_20200326_04.TXT";
         String fileNamePrefix = "OFD_25_225_20200326_";
         int index = filename.indexOf(fileNamePrefix);
